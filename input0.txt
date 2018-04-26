@@ -1,5 +1,6 @@
 %% Operaciones aritméticas y comparación
-BOOLEANO bo, io;
-BOOLEANO ioi;
-entero i, j, k ,f;
-bo = 5<3;
+REAL re1, re2;
+BOOLEANO bo;
+CARACTER ca <- ‘h’; %% variable de tipo carácter, y su literal
+re1=5 * +3 - 80/10; %% esta expresion debe resultar 7
+re2=10 / 5 * re1; %% esta expresion debe resultar

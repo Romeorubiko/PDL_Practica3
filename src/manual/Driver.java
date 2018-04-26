@@ -15,7 +15,6 @@ class Driver {
 			if(variable.tipo.equals('c'))
 				variable.tipo = k;
 		}*/
-
 	}
 	
 }

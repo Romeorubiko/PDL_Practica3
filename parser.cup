@@ -44,13 +44,14 @@ terminal Boolean		BOOLEAN_LITERAL;
 terminal char 			CHAR;
 /* Non terminals */
 non terminal       		expr_list, sentencia, sent_decl,sent_uso,sent_flujo,decl_variable,asignacion
-,expresion,condicional,bucle, operando, blq_sentencias, decl_vector,def_funcion,lista_args
-,argumento, uso_funcion, lista_expresiones,v_exp_list,keytipo, more_v,e_boolean;
+,condicional,bucle, operando, blq_sentencias, decl_vector,def_funcion,lista_args
+,argumento, uso_funcion, lista_expresiones,v_exp_list,keytipo, more_v;
 
 non terminal           	par_neg, impar_neg, plus;
 non terminal Integer    e_int, t_int, f_int, p_int;
 non terminal Float 		e_float, t_float, f_float, p_float;
-//non terminal Boolean  	;
+non terminal Object 	expresion;
+non terminal Boolean  	e_boolean;
 
 
 /* Precedences */
@@ -75,7 +76,11 @@ sent_uso 	::= asignacion SEMI
 sent_flujo 		::= condicional
 			| bucle
     		;
-asignacion ::= ID:e1 ASIG expresion:e2				{: System.out.println(e1+" = "+e2); :}
+asignacion ::= ID:e1 ASIG expresion:e2				{: System.out.println(e1+" = "+e2); 
+														for (Variable variable : variables) {
+															if(variable.id.equals(String.valueOf(e1)))
+																variable.valor = e2;
+														}:}
 			|ID v_exp_list ASIG expresion
 			;    		
 expresion	::= e_int:e 							{: RESULT = e;:}
@@ -182,6 +187,10 @@ f_float 		::=  par_neg DEC_NUMBER:e1		{: RESULT = e1;        :}
 				| impar_neg  p_float:e1			{: RESULT = -e1;        :}
 				| DEC_NUMBER:e1					{: RESULT = e1;        :}
 				| p_float:e1					{: RESULT = e1;        :}
+				| ID:e1							{: for (Variable variable : variables) {
+															if(variable.id.equals(String.valueOf(e1)))
+																RESULT = Float.valueOf(String.valueOf(variable.valor));
+														}       :}
 				;
 				
 p_float 		::= LPAREN e_float:e1 RPAREN	{: RESULT = e1;        :}
