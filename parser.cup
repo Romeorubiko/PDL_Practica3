@@ -103,11 +103,11 @@ condicional ::= SI expresion ENTONCES blq_sentencias FINSI
 			blq_sentencias
 			SINO
 			blq_sentencias
-			FINSI
+			FINSI									
 			;
 bucle ::= MIENTRAS expresion blq_sentencias FINMIENTRAS
 			;
-decl_variable ::= keytipo:k ID:e1 ASIG expresion:e2 {: System.out.println(e1+"="+e2); variables.add(new Variable(String.valueOf(k),String.valueOf(e1),e2)); :}
+decl_variable ::= keytipo:k ID:e1 ASIG expresion:e2 {: System.out.println(e1+" = "+e2); variables.add(new Variable(String.valueOf(k),String.valueOf(e1),e2)); :}
 			| keytipo:k more_v:e1					{: for (Variable variable : variables) {
 															if(variable.tipo.equals(String.valueOf('c')))
 																variable.tipo = String.valueOf(k);

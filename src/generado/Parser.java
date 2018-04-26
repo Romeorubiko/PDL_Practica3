@@ -933,7 +933,7 @@ class CUP$Parser$actions {
 		Location e2xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		Object e2 = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
 		//@@CUPDBG8
- System.out.println(e1+"="+e2); variables.add(new Variable(String.valueOf(k),String.valueOf(e1),e2)); 
+ System.out.println(e1+" = "+e2); variables.add(new Variable(String.valueOf(k),String.valueOf(e1),e2)); 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("decl_variable",5, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-3)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;
