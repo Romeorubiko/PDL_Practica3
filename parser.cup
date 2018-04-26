@@ -48,7 +48,7 @@ non terminal       		expr_list, sentencia, sent_decl,sent_uso,sent_flujo,decl_va
 ,argumento, uso_funcion, lista_expresiones,v_exp_list,keytipo, more_v,e_boolean;
 
 non terminal           	par_neg, impar_neg, plus;
-non terminal Integer    e_int, t_int, f_int, p_int, exp_list;
+non terminal Integer    e_int, t_int, f_int, p_int;
 non terminal Float 		e_float, t_float, f_float, p_float;
 //non terminal Boolean  	;
 
@@ -75,15 +75,16 @@ sent_uso 	::= asignacion SEMI
 sent_flujo 		::= condicional
 			| bucle
     		;
-asignacion ::= ID:e1 ASIG expresion:e2					{: System.out.println(e1+" = "+e2); :}
+asignacion ::= ID:e1 ASIG expresion:e2				{: System.out.println(e1+" = "+e2); :}
 			|ID v_exp_list ASIG expresion
 			;    		
-expresion	::= expr_list:e1 						{: RESULT = e1;:}
+expresion	::= e_int:e 							{: RESULT = e;:}
+			| e_float:e								{: RESULT = e;:}
 			| e_boolean:e 							{: RESULT = e; :}
 			| CHAR:e 								{: RESULT = e; :}
 			;
-v_exp_list  ::= LBRACK exp_list RBRACK
-			| v_exp_list LBRACK exp_list RBRACK
+v_exp_list  ::= LBRACK expr_list RBRACK
+			| v_exp_list LBRACK expr_list RBRACK
 			;
 operando 	::= ENTERO
 			| REAL
@@ -185,13 +186,41 @@ f_float 		::=  par_neg DEC_NUMBER:e1		{: RESULT = e1;        :}
 				
 p_float 		::= LPAREN e_float:e1 RPAREN	{: RESULT = e1;        :}
 				;  
-e_boolean		::= exp_list:e1 EQEQ exp_list:e2{: RESULT = (e1 == e2);        :}
-				| exp_list:e1 LTEQ exp_list:e2	{: RESULT = (((float)e1) <= ((float)e2));        :}
-				| exp_list:e1 GTEQ exp_list:e2	{: RESULT = (((float)e1) >= ((float)e2));        :}
-				| exp_list:e1 NOTEQ exp_list:e2	{: RESULT = (((float)e1) != ((float)e2));        :}
-				| exp_list:e1 LT exp_list:e2	{: RESULT = (((float)e1) < ((float)e2));        :}
-				| exp_list:e1 GT exp_list:e2	{: RESULT = (((float)e1) > ((float)e2));        :}
+e_boolean		::= e_int:e1 EQEQ e_int:e2{: RESULT = (e1 == e2);        :}
+				| e_int:e1 LTEQ e_int:e2	{: RESULT = (((int)e1) <= ((int)e2));        :}
+				| e_int:e1 GTEQ e_int:e2	{: RESULT = (((int)e1) >= ((int)e2));        :}
+				| e_int:e1 NOTEQ e_int:e2	{: RESULT = (((int)e1) != ((int)e2));        :}
+				| e_int:e1 LT e_int:e2	{: RESULT = (((int)e1) < ((int)e2));        :}
+				| e_int:e1 GT e_int:e2	{: RESULT = (((int)e1) > ((int)e2));        :}
 
+				| e_float:e1 EQEQ e_float:e2{: RESULT = (e1 == e2);        :}
+				| e_float:e1 LTEQ e_float:e2	{: RESULT = (((float)e1) <= ((float)e2));        :}
+				| e_float:e1 GTEQ e_float:e2	{: RESULT = (((float)e1) >= ((float)e2));        :}
+				| e_float:e1 NOTEQ e_float:e2	{: RESULT = (((float)e1) != ((float)e2));        :}
+				| e_float:e1 LT e_float:e2	{: RESULT = (((float)e1) < ((float)e2));        :}
+				| e_float:e1 GT e_float:e2	{: RESULT = (((float)e1) > ((float)e2));        :}
+				
+				| e_float:e1 EQEQ e_int:e2{: RESULT = (e1 == e2.floatValue());        :}
+				| e_float:e1 LTEQ e_int:e2	{: RESULT = (((float)e1) <= ((float)e2));        :}
+				| e_float:e1 GTEQ e_int:e2	{: RESULT = (((float)e1) >= ((float)e2));        :}
+				| e_float:e1 NOTEQ e_int:e2	{: RESULT = (((float)e1) != ((float)e2));        :}
+				| e_float:e1 LT e_int:e2	{: RESULT = (((float)e1) < ((float)e2));        :}
+				| e_float:e1 GT e_int:e2	{: RESULT = (((float)e1) > ((float)e2));        :}
+				
+				| e_int:e1 EQEQ e_float:e2{: RESULT = (e1.floatValue() == e2);        :}
+				| e_int:e1 LTEQ e_float:e2	{: RESULT = (((float)e1) <= ((float)e2));        :}
+				| e_int:e1 GTEQ e_float:e2	{: RESULT = (((float)e1) >= ((float)e2));        :}
+				| e_int:e1 NOTEQ e_float:e2	{: RESULT = (((float)e1) != ((float)e2));        :}
+				| e_int:e1 LT e_float:e2	{: RESULT = (((float)e1) < ((float)e2));        :}
+				| e_int:e1 GT e_float:e2	{: RESULT = (((float)e1) > ((float)e2));        :}
+/*
+					expr_list:e1 EQEQ expr_list:e2{: RESULT = (e1 == e2);        :}
+				| expr_list:e1 LTEQ expr_list:e2	{: RESULT = (((float)e1) <= ((float)e2));        :}
+				| expr_list:e1 GTEQ expr_list:e2	{: RESULT = (((float)e1) >= ((float)e2));        :}
+				| expr_list:e1 NOTEQ expr_list:e2	{: RESULT = (((float)e1) != ((float)e2));        :}
+				| expr_list:e1 LT expr_list:e2	{: RESULT = (((float)e1) < ((float)e2));        :}
+				| expr_list:e1 GT expr_list:e2	{: RESULT = (((float)e1) > ((float)e2));        :}
+*/
 				| e_boolean:e1 OR  e_boolean:e2	{: RESULT = (((boolean)e1) || ((boolean)e2));        :}
 				| e_boolean:e1 AND  e_boolean:e2{: RESULT = (((boolean)e1) && ((boolean)e2));        :}
 				| NOT  e_boolean:e1				{: RESULT = !(boolean)e1;        :}
