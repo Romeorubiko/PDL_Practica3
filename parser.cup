@@ -43,14 +43,14 @@ terminal Float 			DEC_NUMBER;
 terminal Boolean		BOOLEAN_LITERAL;
 terminal char 			CHAR;
 /* Non terminals */
-non terminal        exp_list,sentencia, sent_decl,sent_uso,sent_flujo,decl_variable,asignacion
+non terminal       		expr_list, sentencia, sent_decl,sent_uso,sent_flujo,decl_variable,asignacion
 ,expresion,condicional,bucle, operando, blq_sentencias, decl_vector,def_funcion,lista_args
-,argumento, uso_funcion, lista_expresiones,v_exp_list,keytipo, more_v;
+,argumento, uso_funcion, lista_expresiones,v_exp_list,keytipo, more_v,e_boolean;
 
-non terminal            expr_list,par_neg, impar_neg, plus;
-non terminal Integer    e_int, t_int, f_int, p_int;
+non terminal           	par_neg, impar_neg, plus;
+non terminal Integer    e_int, t_int, f_int, p_int, exp_list;
 non terminal Float 		e_float, t_float, f_float, p_float;
-non terminal Boolean  	e_boolean;
+//non terminal Boolean  	;
 
 
 /* Precedences */
