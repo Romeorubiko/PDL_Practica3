@@ -1,5 +1,6 @@
 package manual;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import generado.*;
@@ -15,6 +16,8 @@ class Driver {
 			if(variable.tipo.equals('c'))
 				variable.tipo = k;
 		}*/
+		 ArrayList<Integer> temp = new ArrayList<>();
+		 temp.toArray();
 	}
 	
 }

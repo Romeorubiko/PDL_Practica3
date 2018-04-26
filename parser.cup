@@ -9,6 +9,7 @@ import java_cup.runtime.*;
 import generado.Lexer;
 import manual.Variable;
 import java.util.ArrayList;
+import java.lang.reflect.Array;
 import java.io.IOException;
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,13 +17,14 @@ import java.io.FileInputStream;
 parser code {:
   protected Lexer lexer;
   ArrayList<Variable> variables = new ArrayList<>(); 
+  ArrayList<Integer> temp = new ArrayList<>();	
 :}
 
 /* define how to connect to the scanner! */
 init with {:
   ComplexSymbolFactory f = new ComplexSymbolFactory();
   symbolFactory = f;
-  File file = new File("input0.txt");
+  File file = new File("input1.txt");
   FileInputStream fis = null;
   try {
     fis = new FileInputStream(file);
@@ -43,9 +45,9 @@ terminal Float 			DEC_NUMBER;
 terminal Boolean		BOOLEAN_LITERAL;
 terminal char 			CHAR;
 /* Non terminals */
-non terminal       		expr_list, sentencia, sent_decl,sent_uso,sent_flujo,decl_variable,asignacion
+non terminal       		v_exp_list,expr_list, sentencia, sent_decl,sent_uso,sent_flujo,decl_variable,asignacion
 ,condicional,bucle, operando, blq_sentencias, decl_vector,def_funcion,lista_args
-,argumento, uso_funcion, lista_expresiones,v_exp_list,keytipo, more_v;
+,argumento, uso_funcion, lista_expresiones,keytipo, more_v;
 
 non terminal           	par_neg, impar_neg, plus;
 non terminal Integer    e_int, t_int, f_int, p_int;
@@ -69,6 +71,7 @@ sentencia 	::= sent_decl
 			| sent_flujo
 			;
 sent_decl 	::= decl_variable SEMI
+			| decl_vector SEMI
 			;
 sent_uso 	::= asignacion SEMI
 			| expresion SEMI
@@ -88,8 +91,8 @@ expresion	::= e_int:e 							{: RESULT = e;:}
 			| e_boolean:e 							{: RESULT = e; :}
 			| CHAR:e 								{: RESULT = e; :}
 			;
-v_exp_list  ::= LBRACK expr_list RBRACK
-			| v_exp_list LBRACK expr_list RBRACK
+v_exp_list  ::= LBRACK e_int:e RBRACK			{:temp.add(e);:}
+			| v_exp_list LBRACK e_int:e RBRACK	{:temp.add(e);:}
 			;
 operando 	::= ENTERO
 			| REAL
@@ -117,12 +120,14 @@ decl_variable ::= keytipo:k ID:e1 ASIG expresion:e2 {: System.out.println(e1+" =
 more_v ::= more_v COMA ID:e1						{:System.out.println("Declarado: "+e1);variables.add(new Variable(String.valueOf('c'),String.valueOf(e1),null));:}
 			| ID:e1									{:System.out.println("Declarado: "+e1);variables.add(new Variable(String.valueOf('c'),String.valueOf(e1),null));:}
 			;
-keytipo		::= ENTERO:e								{: RESULT = e; :}
-			| REAL:e									{: RESULT = e; :}
-			| BOOLEANO:e								{: RESULT = e; :}
-			| CARACTER:e 								{: RESULT = e; :}
+keytipo		::= ENTERO								{: RESULT = "ENTERO"; :}
+			| REAL									{: RESULT = "REAL"; :}
+			| BOOLEANO:e							{: RESULT = "BOOLEANO"; :}
+			| CARACTER:e 							{: RESULT = "CARACTER"; :}
 			;
-decl_vector ::= VECTOR keytipo ID v_exp_list
+decl_vector ::= VECTOR keytipo:k ID:e1 v_exp_list:e2{:	if(String.valueOf(k).equals("ENTERO"))variables.add(new Variable("VECTOR",String.valueOf(e1),Array.newInstance(Integer.class, temp.stream().mapToInt(i -> i).toArray())));													
+														temp.clear();
+													:}
 			;
 
 			/*
