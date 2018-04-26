@@ -9,7 +9,7 @@ package generado;
 public interface sym {
   /* terminals */
   public static final int GTEQ = 24;
-  public static final int CHAR = 37;
+  public static final int CHAR = 41;
   public static final int LTEQ = 23;
   public static final int ENTERO = 2;
   public static final int SI = 10;
@@ -18,7 +18,7 @@ public interface sym {
   public static final int ENTONCES = 11;
   public static final int MINUS = 20;
   public static final int RPAREN = 32;
-  public static final int BOOLEAN_LITERAL = 41;
+  public static final int BOOLEAN_LITERAL = 40;
   public static final int LCURVY = 35;
   public static final int NOT = 5;
   public static final int AND = 14;
@@ -32,12 +32,12 @@ public interface sym {
   public static final int SAL = 29;
   public static final int RCURVY = 36;
   public static final int PLUS = 19;
-  public static final int ID = 38;
+  public static final int ID = 37;
   public static final int EOF = 0;
   public static final int ASIG = 28;
   public static final int error = 1;
   public static final int COMA = 18;
-  public static final int DEC_NUMBER = 40;
+  public static final int DEC_NUMBER = 39;
   public static final int EQEQ = 22;
   public static final int EQ = 16;
   public static final int VECTOR = 7;
@@ -45,7 +45,7 @@ public interface sym {
   public static final int REAL = 3;
   public static final int TIMES = 21;
   public static final int RBRACK = 34;
-  public static final int INT_NUMBER = 39;
+  public static final int INT_NUMBER = 38;
   public static final int BOOLEANO = 6;
   public static final int FINSI = 13;
   public static final int GT = 27;
@@ -88,11 +88,11 @@ public interface sym {
   "RBRACK",
   "LCURVY",
   "RCURVY",
-  "CHAR",
   "ID",
   "INT_NUMBER",
   "DEC_NUMBER",
-  "BOOLEAN_LITERAL"
+  "BOOLEAN_LITERAL",
+  "CHAR"
   };
 }
 
