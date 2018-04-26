@@ -1,29 +1,5 @@
-%% Operaciones aritméticas y comparación
-REAL re1, re2;
-BOOLEANO bo;
-CARACTER ca <- ‘h’; %% variable de tipo carácter, y su literal
-re1=5 * +3 - 80/10; %% esta expresion debe resultar 7
-re2=10 / 5 * re1; %% esta expresion debe resultar 4
-bo =5<3; %% comparación, debe resultar true
-%% si un número es positivo
-REAL num;
-BOOLEANO espos;
-SI num >= 0 ENTONCES
-espositivo= TRUE;
-SINO
-espositivo= FALSO;
-FINSI
-%%cálculo del máximo
-REAL a,b,c,max;
-a=1;
-b=2;
-c=3;
-SI a>=b AND a>=c ENTONCES %% a es el máximo
-max=a;
-SINO %% el máximo es b o c
-SI b>=a AND b>=c ENTONCES %% b es el máximo
-max=b;
-SINO %% c es el máximo, por descarte
-max=c;
-FINSI
-FINSI
+%% Operaciones aritm�ticas y comparaci�n
+BOOLEANO bo, io;
+BOOLEANO ioi;
+entero i, j, k ,f;
+bo = 5<3;

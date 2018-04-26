@@ -1,21 +1,57 @@
 package generado; // paquete en el que se genera el fichero java
-import manual.SimbolosTerminales; //Simbolos terminales definidos
-import manual.Symbol;
-
+import java_cup.runtime.ComplexSymbolFactory;
+import java_cup.runtime.ComplexSymbolFactory.Location;
+import java_cup.runtime.Symbol;
+import java.lang.*;
+import java.io.InputStreamReader;
 %%
 
 %class Lexer
-%implements SimbolosTerminales
+%implements sym
 %public
 %unicode
-
 %line
 %column
+%cup
 %char
+%{
+	
 
-%function next_token // Nombre del método que escanea la entrada y
- // devuelve el siguiente token
-%type Symbol // Tipo de retorno para la función de scan
+    public Lexer(ComplexSymbolFactory sf, java.io.InputStream is){
+		this(is);
+        symbolFactory = sf;
+    }
+	public Lexer(ComplexSymbolFactory sf, java.io.Reader reader){
+		this(reader);
+        symbolFactory = sf;
+    }
+    
+    private StringBuffer sb;
+    private ComplexSymbolFactory symbolFactory;
+    private int csline,cscolumn;
+
+    public Symbol symbol(String name, int code){
+		return symbolFactory.newSymbol(name, code,
+						new Location(yyline+1,yycolumn+1, yychar), // -yylength()
+						new Location(yyline+1,yycolumn+yylength(), yychar+yylength())
+				);
+    }
+    public Symbol symbol(String name, int code, String lexem){
+	return symbolFactory.newSymbol(name, code, 
+						new Location(yyline+1, yycolumn +1, yychar), 
+						new Location(yyline+1,yycolumn+yylength(), yychar+yylength()), lexem);
+    }
+    
+    protected void emit_warning(String message){
+    	System.out.println("scanner warning: " + message + " at : 2 "+ 
+    			(yyline+1) + " " + (yycolumn+1) + " " + yychar);
+    }
+    
+    protected void emit_error(String message){
+    	System.out.println("scanner error: " + message + " at : 2" + 
+    			(yyline+1) + " " + (yycolumn+1) + " " + yychar);
+    }
+%}
 
 Whitespace = [ \t\f] | {LineTerminator}
 LineTerminator = \r|\n|\r\n
@@ -57,73 +93,74 @@ Oct_Number = 0 [xX] 0 {OctLiteral}
 ScientificNotation = [0-9]"."{NumLiteral}[E][+-]{0,1}{NumLiteral}
 
 /*Comentarios*/
-Comentario = "#" {InputCharacter}* {LineTerminator}?
+Comentario = "%%" {InputCharacter}* {LineTerminator}?
 LineTerminator = \r|\n|\r\n
 InputCharacter = [^\r\n]
 
 %eofval{
- return new Symbol(EOF);
+    return symbolFactory.newSymbol("EOF",sym.EOF);
 %eofval}
 
-/* Macros para expresiones regulares (para simplificar reglas) */
+%state CODESEG
 
-%% 
+%%  
 
 /* Reglas para detectar los tokens y acciones asociadas */
 <YYINITIAL> {
 	  {Whitespace}  {/*ignorar*/}
 	  {Comentario} 	{/*ignorar*/}
-	  {True}	    { return new Symbol(BOOLEAN_LITERAL, Boolean.TRUE); }
-	  {False} 		{ return new Symbol(BOOLEAN_LITERAL, Boolean.FALSE); }
-	  {Entero}		{ return new Symbol(ENTERO, "ENTERO"); }
-	  {Real} 		{ return new Symbol(REAL, "REAL"); }
-	  {Finmientras} { return new Symbol(FINMIENTRAS, "FINMIENTRAS"); }
-	  {Not} 		{ return new Symbol(NOT, "NOT"); }
-	  "¬"			{ return new Symbol(NOT, "NOT"); }
-	  {Booleano} 	{ return new Symbol(BOOLEANO, "BOOLEANO"); }
-	  {Vector} 		{ return new Symbol(VECTOR, "VECTOR"); }
-	  {Caracter} 	{ return new Symbol(CARACTER, "CARACTER"); }
-	  {Mientras} 	{ return new Symbol(MIENTRAS, "MIENTRAS"); }
-	  {Si} 			{ return new Symbol(SI, "SI"); }
-	  {Entonces} 	{ return new Symbol(ENTONCES, "ENTONCES"); }
-	  {Sino} 		{ return new Symbol(SINO, "SINO"); }
-	  {Finsi} 		{ return new Symbol(FINSI, "FINSI"); }
-	  {And} 		{ return new Symbol(AND, "AND"); }
-	  "&"	 		{ return new Symbol(AND, "AND"); }
-	  {Or} 			{ return new Symbol(OR, "OR"); }
-  	  "|"			{ return new Symbol(OR, "OR"); }
-	  "="          	{ return new Symbol(EQ, "EQ"); }
- 	  ";"          	{ return new Symbol(SEMI, "SEMI"); }
-  	  "+"          	{ return new Symbol(PLUS, "PLUS"); }
-   	  "-"          	{ return new Symbol(MINUS, "MINUS"); }
-   	  "–"			{ return new Symbol(MINUS, "MINUS"); }
-  	  "*"          	{ return new Symbol(TIMES, "TIMES"); }
-  	  "=="		   	{ return new Symbol(EQEQ, "EQEQ"); }
-  	  "<="		   	{ return new Symbol(LTEQ, "LTEQ"); }
-  	  ">="		   	{ return new Symbol(GTEQ, "GTEQ"); }
-  	  "!="		   	{ return new Symbol(NOTEQ, "NOTEQ"); }
-  	  "<"		   	{ return new Symbol(LT, "LT"); }
-  	  ">"		   	{ return new Symbol(GT, "GT"); }
-  	  "<-"			{ return new Symbol(ASIG, "ASIG"); }
-  	  "->"			{ return new Symbol(SAL, "SAL"); }
-  	  "/"			{ return new Symbol(DIVIDEBY, "DIVIDEBY"); }
-  	  "("		   	{ return new Symbol(LPAREN, "LPAREN"); }
-  	  ")"		   	{ return new Symbol(RPAREN, "RPAREN"); }
-  	  "["		   	{ return new Symbol(LBRACK, "LBRACK"); }
-  	  "]"		   	{ return new Symbol(RBRACK, "RBRACK"); }
-  	  {Int_Number} 	{ return new Symbol(INT_NUMBER, Integer.parseInt(yytext())); }
-  	  {Dec_Number} 	{ return new Symbol(DEC_NUMBER, Float.parseFloat(yytext())); }
-      {Hex_Number} 	{ return new Symbol(INT_NUMBER, Integer.parseInt(yytext().substring(2, yytext().length()), 16));}
-      {Oct_Number} 	{ return new Symbol(INT_NUMBER, Integer.parseInt(yytext().substring(3, yytext().length()), 8));}
-      {ScientificNotation} { return new Symbol(DEC_NUMBER, Float.parseFloat(yytext()));}
-      {Identificador} { return new Symbol(IDENTIFICADOR, yytext()); }
-      {Char} 		{ return new Symbol(CHAR, yytext()); }
+	  {True}	    { return  symbolFactory.newSymbol("BOOLEAN_LITERAL", BOOLEAN_LITERAL, Boolean.TRUE); }
+	  {False} 		{ return  symbolFactory.newSymbol("BOOLEAN_LITERAL", BOOLEAN_LITERAL, Boolean.FALSE); }
+	  {Entero}		{ return  symbolFactory.newSymbol("ENTERO", ENTERO, yytext()); }
+	  {Real} 		{ return  symbolFactory.newSymbol("REAL", REAL, yytext()); }
+	  {Finmientras} { return  symbolFactory.newSymbol("FINMIENTRAS", FINMIENTRAS, yytext()); }
+	  {Not} 		{ return  symbolFactory.newSymbol("NOT", NOT, yytext()); }
+	  "¬"			{ return  symbolFactory.newSymbol("NOT", NOT, yytext()); }
+	  {Booleano} 	{ return  symbolFactory.newSymbol("BOOLEANO", BOOLEANO, yytext()); }
+	  {Vector} 		{ return  symbolFactory.newSymbol("VECTOR", VECTOR, yytext()); }
+	  {Caracter} 	{ return  symbolFactory.newSymbol("CARACTER", CARACTER, yytext()); }
+	  {Mientras} 	{ return  symbolFactory.newSymbol("MIENTRAS", MIENTRAS, yytext()); }
+	  {Si} 			{ return  symbolFactory.newSymbol("SI", SI, yytext()); }
+	  {Entonces} 	{ return  symbolFactory.newSymbol("ENTONCES", ENTONCES, yytext()); }
+	  {Sino} 		{ return  symbolFactory.newSymbol("SINO", SINO, yytext()); }
+	  {Finsi} 		{ return  symbolFactory.newSymbol("FINSI", FINSI, yytext()); }
+	  {And} 		{ return  symbolFactory.newSymbol("AND", AND, yytext()); }
+	  "&"	 		{ return  symbolFactory.newSymbol("AND", AND); }
+	  {Or} 			{ return  symbolFactory.newSymbol("OR", OR, yytext()); }
+  	  "|"			{ return  symbolFactory.newSymbol("OR", OR); }
+	  "="          	{ return  symbolFactory.newSymbol("ASIG", ASIG); }
+ 	  ";"          	{ return  symbolFactory.newSymbol("SEMI", SEMI); }
+ 	  ","          	{ return  symbolFactory.newSymbol("COMA", COMA); }
+  	  "+"          	{ return  symbolFactory.newSymbol("PLUS", PLUS); }
+   	  "-"          	{ return  symbolFactory.newSymbol("MINUS", MINUS); }
+   	  "–"			{ return  symbolFactory.newSymbol("MINUS", MINUS); }
+  	  "*"          	{ return  symbolFactory.newSymbol("TIMES", TIMES); }
+  	  "=="		   	{ return  symbolFactory.newSymbol("EQEQ", EQEQ); }
+  	  "<="		   	{ return  symbolFactory.newSymbol("LTEQ", LTEQ); }
+  	  ">="		   	{ return  symbolFactory.newSymbol("GTEQ", GTEQ); }
+  	  "!="		   	{ return  symbolFactory.newSymbol("NOTEQ", NOTEQ); }
+  	  "<"		   	{ return  symbolFactory.newSymbol("LT", LT); }
+  	  ">"		   	{ return  symbolFactory.newSymbol("GT", GT); }
+  	  "<-"			{ return  symbolFactory.newSymbol("ASIG", ASIG); }
+  	  "->"			{ return  symbolFactory.newSymbol("SAL", SAL); }
+  	  "/"			{ return  symbolFactory.newSymbol("DIVIDEBY", DIVIDEBY); }
+  	  "("		   	{ return  symbolFactory.newSymbol("LPAREN", LPAREN); }
+  	  ")"		   	{ return  symbolFactory.newSymbol("RPAREN", RPAREN); }
+  	  "["		   	{ return  symbolFactory.newSymbol("LBRACK", LBRACK); }
+  	  "]"		   	{ return  symbolFactory.newSymbol("RBRACK", RBRACK); }
+  	  "{"		   	{ return  symbolFactory.newSymbol("LCURVY", LCURVY); }
+  	  "}"		   	{ return  symbolFactory.newSymbol("RCURVY", RCURVY); }
+	  {Int_Number} { return symbolFactory.newSymbol("INT_NUMBER", INT_NUMBER, Integer.parseInt(yytext())); }
+	  {Dec_Number} { return symbolFactory.newSymbol("DEC_NUMBER", DEC_NUMBER, Float.parseFloat(yytext())); }
+	  {Hex_Number} { return symbolFactory.newSymbol("INT_NUMBER", INT_NUMBER, Integer.parseInt(yytext().substring(2, yytext().length()), 16));}
+	  {Oct_Number} { return symbolFactory.newSymbol("INT_NUMBER", INT_NUMBER, Integer.parseInt(yytext().substring(3, yytext().length()), 8));}
+      {ScientificNotation} { return  symbolFactory.newSymbol("DEC_NUMBER", DEC_NUMBER, Float.parseFloat(yytext()));}
+      {Identificador} { return  symbolFactory.newSymbol("ID", ID, yytext()); }
+      {Char} 		{ return  symbolFactory.newSymbol("CHAR", CHAR, String.valueOf(yytext()).charAt(2)); }
 
 }
 
 
 
 // error fallback
-.|\n {System.err.println("warning: Unrecognized character '"
- + yytext()+"' -- ignored" + " at : "+ (yyline+1) + " " +
- (yycolumn+1) + " " + yychar); }
+.|\n          { emit_warning("Unrecognized character '" +yytext()+"' -- ignored"); }

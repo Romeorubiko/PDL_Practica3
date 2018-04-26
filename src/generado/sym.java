@@ -8,27 +8,91 @@ package generado;
 /** CUP generated interface containing symbol constants. */
 public interface sym {
   /* terminals */
-  public static final int MINUS = 4;
-  public static final int UMINUS = 5;
-  public static final int NUMBER = 9;
-  public static final int SEMI = 2;
+  public static final int GTEQ = 24;
+  public static final int CHAR = 37;
+  public static final int LTEQ = 23;
+  public static final int ENTERO = 2;
+  public static final int SI = 10;
+  public static final int LPAREN = 31;
+  public static final int SEMI = 17;
+  public static final int ENTONCES = 11;
+  public static final int MINUS = 20;
+  public static final int RPAREN = 32;
+  public static final int BOOLEAN_LITERAL = 41;
+  public static final int LCURVY = 35;
+  public static final int NOT = 5;
+  public static final int AND = 14;
+  public static final int LT = 26;
+  public static final int FINMIENTRAS = 4;
+  public static final int SINO = 12;
+  public static final int CARACTER = 8;
+  public static final int OR = 15;
+  public static final int DIVIDEBY = 30;
+  public static final int MIENTRAS = 9;
+  public static final int SAL = 29;
+  public static final int RCURVY = 36;
+  public static final int PLUS = 19;
+  public static final int ID = 38;
   public static final int EOF = 0;
-  public static final int PLUS = 3;
+  public static final int ASIG = 28;
   public static final int error = 1;
-  public static final int RPAREN = 8;
-  public static final int TIMES = 6;
-  public static final int LPAREN = 7;
+  public static final int COMA = 18;
+  public static final int DEC_NUMBER = 40;
+  public static final int EQEQ = 22;
+  public static final int EQ = 16;
+  public static final int VECTOR = 7;
+  public static final int LBRACK = 33;
+  public static final int REAL = 3;
+  public static final int TIMES = 21;
+  public static final int RBRACK = 34;
+  public static final int INT_NUMBER = 39;
+  public static final int BOOLEANO = 6;
+  public static final int FINSI = 13;
+  public static final int GT = 27;
+  public static final int NOTEQ = 25;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
+  "ENTERO",
+  "REAL",
+  "FINMIENTRAS",
+  "NOT",
+  "BOOLEANO",
+  "VECTOR",
+  "CARACTER",
+  "MIENTRAS",
+  "SI",
+  "ENTONCES",
+  "SINO",
+  "FINSI",
+  "AND",
+  "OR",
+  "EQ",
   "SEMI",
+  "COMA",
   "PLUS",
   "MINUS",
-  "UMINUS",
   "TIMES",
+  "EQEQ",
+  "LTEQ",
+  "GTEQ",
+  "NOTEQ",
+  "LT",
+  "GT",
+  "ASIG",
+  "SAL",
+  "DIVIDEBY",
   "LPAREN",
   "RPAREN",
-  "NUMBER"
+  "LBRACK",
+  "RBRACK",
+  "LCURVY",
+  "RCURVY",
+  "CHAR",
+  "ID",
+  "INT_NUMBER",
+  "DEC_NUMBER",
+  "BOOLEAN_LITERAL"
   };
 }
 

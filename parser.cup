@@ -6,20 +6,23 @@
 package generado;
 
 import java_cup.runtime.*;
-import generado.*;
+import generado.Lexer;
+import manual.Variable;
+import java.util.ArrayList;
 import java.io.IOException;
 import java.io.File;
 import java.io.FileInputStream;
 
 parser code {:
   protected Lexer lexer;
+  ArrayList<Variable> variables = new ArrayList<>(); 
 :}
 
 /* define how to connect to the scanner! */
 init with {:
   ComplexSymbolFactory f = new ComplexSymbolFactory();
   symbolFactory = f;
-  File file = new File("input.txt");
+  File file = new File("input0.txt");
   FileInputStream fis = null;
   try {
     fis = new FileInputStream(file);
@@ -31,29 +34,184 @@ init with {:
 scan with {: return lexer.next_token(); :};
 
 /* Terminals (tokens returned by the scanner). */
-terminal            SEMI, PLUS, MINUS, UMINUS, TIMES, LPAREN, RPAREN;
-terminal Integer    NUMBER;        // our scanner provides numbers as integers
-
+terminal   ENTERO, REAL, FINMIENTRAS, NOT, BOOLEANO, VECTOR, CARACTER
+, MIENTRAS, SI, ENTONCES, SINO, FINSI, AND, OR, EQ, SEMI, COMA, PLUS, MINUS, TIMES, EQEQ
+, LTEQ, GTEQ, NOTEQ, LT, GT, ASIG, SAL, DIVIDEBY, LPAREN, RPAREN, LBRACK, RBRACK, LCURVY
+, RCURVY, CHAR,ID;
+terminal Integer    	INT_NUMBER;       
+terminal Float 			DEC_NUMBER;
+terminal Boolean		BOOLEAN_LITERAL;
+terminal char 			CHAR;
 /* Non terminals */
-non terminal            expr_list;
-non terminal Integer    expr;      // used to store evaluated subexpressions
+non terminal        exp_list,sentencia, sent_decl,sent_uso,sent_flujo,decl_variable,asignacion
+,expresion,condicional,bucle, operando, blq_sentencias, decl_vector,def_funcion,lista_args
+,argumento, uso_funcion, lista_expresiones,v_exp_list,keytipo, more_v;
+
+non terminal            expr_list,par_neg, impar_neg, plus;
+non terminal Integer    e_int, t_int, f_int, p_int;
+non terminal Float 		e_float, t_float, f_float, p_float;
+non terminal Boolean  	e_boolean;
+
 
 /* Precedences */
+precedence left AND, OR;
+precedence nonassoc GT, LT, EQ;
 precedence left PLUS, MINUS;
-precedence left TIMES;
-precedence left UMINUS;
+precedence left TIMES, DIVIDEBY;
 
 /* The grammar rules */
-expr_list ::= expr_list expr:e SEMI         {: System.out.println(e); :}
-            | expr:e SEMI                   {: System.out.println(e); :}
-            ;
-            
-expr      ::= expr:e1 PLUS  expr:e2         {: RESULT = e1+e2;        :}
-             | expr:e1 MINUS expr:e2        {: RESULT = e1-e2;        :}
-             | expr:e1 TIMES expr:e2        {: RESULT = e1*e2;        :}
-             | MINUS expr:e                 {: RESULT = -e;           :}
-             %prec UMINUS
-             | LPAREN expr:e RPAREN	         {: RESULT = e;           :}
-             | NUMBER:n	                     {: RESULT = n;           :}
-             ;
-       
+blq_sentencias	::= blq_sentencias sentencia
+			| sentencia
+			;
+sentencia 	::= sent_decl
+			| sent_uso
+			| sent_flujo
+			;
+sent_decl 	::= decl_variable SEMI
+			;
+sent_uso 	::= asignacion SEMI
+			| expresion SEMI
+			;
+sent_flujo 		::= condicional
+			| bucle
+    		;
+asignacion ::= ID:e1 ASIG expresion:e2					{: System.out.println(e1+" = "+e2); :}
+			|ID v_exp_list ASIG expresion
+			;    		
+expresion	::= expr_list:e1 						{: RESULT = e1;:}
+			| e_boolean:e 							{: RESULT = e; :}
+			| CHAR:e 								{: RESULT = e; :}
+			;
+v_exp_list  ::= LBRACK exp_list RBRACK
+			| v_exp_list LBRACK exp_list RBRACK
+			;
+operando 	::= ENTERO
+			| REAL
+			| BOOLEANO
+			| CARACTER
+			| ID
+			| ID v_exp_list
+			;
+condicional ::= SI expresion ENTONCES blq_sentencias FINSI
+			| SI expresion ENTONCES
+			blq_sentencias
+			SINO
+			blq_sentencias
+			FINSI
+			;
+bucle ::= MIENTRAS expresion blq_sentencias FINMIENTRAS
+			;
+decl_variable ::= keytipo:k ID:e1 ASIG expresion:e2 {: System.out.println(e1+"="+e2); variables.add(new Variable(String.valueOf(k),String.valueOf(e1),e2)); :}
+			| keytipo:k more_v:e1					{: for (Variable variable : variables) {
+															if(variable.tipo.equals(String.valueOf('c')))
+																variable.tipo = String.valueOf(k);
+														}
+													:}
+			;
+more_v ::= more_v COMA ID:e1						{:System.out.println("Declarado: "+e1);variables.add(new Variable(String.valueOf('c'),String.valueOf(e1),null));:}
+			| ID:e1									{:System.out.println("Declarado: "+e1);variables.add(new Variable(String.valueOf('c'),String.valueOf(e1),null));:}
+			;
+keytipo		::= ENTERO:e								{: RESULT = e; :}
+			| REAL:e									{: RESULT = e; :}
+			| BOOLEANO:e								{: RESULT = e; :}
+			| CARACTER:e 								{: RESULT = e; :}
+			;
+decl_vector ::= VECTOR keytipo ID v_exp_list
+			;
+
+			/*
+def_funcion ::= FUNCION ID LPAREN lista_args RPAREN SAL KEYTIPO
+			LCURVY blq_sentencias RCURVY
+			| FUNCION ID LPAREN RPAREN SAL KEYTIPO
+			LCURVY blq_sentencias RCURVY
+			;
+argumento 	::= KEYTIPO ID
+			;
+uso_funcion ::= ID LPAREN lista_expresiones RPAREN
+			;	
+*/			
+//expresiones
+
+expr_list 	::= e_int:e 						{: RESULT = e; :}
+				| e_float:e						{: RESULT = e; :}
+				;
+/*integer*/
+e_int 		::=	e_int:e1 PLUS t_int:e2			{: RESULT = e1+e2;        :}
+				| e_int:e1 MINUS t_int:e2		{: RESULT = e1-e2;        :}
+				| t_int:e1						{: RESULT = e1;        	:}
+				;
+				
+t_int 		::= t_int:e1 TIMES f_int:e2 		{: RESULT = e1*e2;        :}
+				| f_int:e1						{: RESULT = e1;        :}
+				;
+				
+f_int 		::= par_neg INT_NUMBER:e1			{: RESULT = e1;        :}
+				| impar_neg INT_NUMBER:e1		{: RESULT = -e1;       :}
+				| par_neg p_int:e1				{: RESULT = e1;        :}
+				| impar_neg p_int:e1			{: RESULT = -e1;       :}
+				| INT_NUMBER:e1					{: RESULT = e1;        :}
+				| p_int:e1						{: RESULT = e1;        :}
+				;
+		
+p_int 		::= LPAREN e_int:e1 RPAREN			{: RESULT = e1;        :}
+				;
+/*float*/
+e_float 		::=	e_float:e1 PLUS t_float:e2	{: RESULT = e1+e2;        :}
+				| e_float:e1 MINUS t_float:e2	{: RESULT = e1-e2;        :}
+				| e_float:e1 PLUS t_int:e2		{: RESULT = e1+e2;        :}
+				| e_float:e1 MINUS t_int:e2		{: RESULT = e1-e2;        :}
+				| e_int:e1 PLUS t_float:e2		{: RESULT = e1+e2;        :}
+				| e_int:e1 MINUS t_float:e2		{: RESULT = e1-e2;        :}
+				| t_float:e1					{: RESULT = e1;        	:}
+				;
+				
+t_float 		::= t_float:e1 TIMES f_float:e2 {: RESULT = e1*e2;        :}
+				| t_float:e1 DIVIDEBY f_float:e2{: RESULT = e1/e2;        :}
+				| t_float:e1 TIMES f_int:e2 	{: RESULT = e1*e2;        :}
+				| t_float:e1 DIVIDEBY f_int:e2	{: RESULT = e1/e2.floatValue();        :}
+				| t_int:e1 TIMES f_float:e2 	{: RESULT = e1*e2;        :}
+				| t_int:e1 DIVIDEBY f_float:e2	{: RESULT = e1.floatValue()/e2;        :}
+				| t_int:e1 DIVIDEBY f_int:e2	{: RESULT = e1.floatValue()/e2.floatValue();        :}
+				| f_float:e1					{: RESULT = e1;        :}
+				;
+				
+f_float 		::=  par_neg DEC_NUMBER:e1		{: RESULT = e1;        :}
+				| impar_neg DEC_NUMBER:e1		{: RESULT = -e1;        :}
+				| par_neg  p_float:e1			{: RESULT = e1;        :}
+				| impar_neg  p_float:e1			{: RESULT = -e1;        :}
+				| DEC_NUMBER:e1					{: RESULT = e1;        :}
+				| p_float:e1					{: RESULT = e1;        :}
+				;
+				
+p_float 		::= LPAREN e_float:e1 RPAREN	{: RESULT = e1;        :}
+				;  
+e_boolean		::= exp_list:e1 EQEQ exp_list:e2{: RESULT = (e1 == e2);        :}
+				| exp_list:e1 LTEQ exp_list:e2	{: RESULT = (((float)e1) <= ((float)e2));        :}
+				| exp_list:e1 GTEQ exp_list:e2	{: RESULT = (((float)e1) >= ((float)e2));        :}
+				| exp_list:e1 NOTEQ exp_list:e2	{: RESULT = (((float)e1) != ((float)e2));        :}
+				| exp_list:e1 LT exp_list:e2	{: RESULT = (((float)e1) < ((float)e2));        :}
+				| exp_list:e1 GT exp_list:e2	{: RESULT = (((float)e1) > ((float)e2));        :}
+
+				| e_boolean:e1 OR  e_boolean:e2	{: RESULT = (((boolean)e1) || ((boolean)e2));        :}
+				| e_boolean:e1 AND  e_boolean:e2{: RESULT = (((boolean)e1) && ((boolean)e2));        :}
+				| NOT  e_boolean:e1				{: RESULT = !(boolean)e1;        :}
+				| BOOLEAN_LITERAL:e1			{: RESULT = e1;        :}
+				;				
+//sustitucion de uminus				      
+par_neg 		::= MINUS MINUS
+				| par_neg MINUS MINUS
+				| PLUS
+				| par_neg PLUS
+				| MINUS plus MINUS
+				| par_neg MINUS plus MINUS
+				;
+				
+impar_neg		::= MINUS
+				| MINUS plus
+				| par_neg MINUS
+				| par_neg MINUS plus					
+				;					   
+				
+plus 			::= plus PLUS
+				| PLUS
+				;					
