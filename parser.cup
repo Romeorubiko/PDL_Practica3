@@ -195,7 +195,7 @@ f_float 		::=  par_neg DEC_NUMBER:e1		{: RESULT = e1;        :}
 				
 p_float 		::= LPAREN e_float:e1 RPAREN	{: RESULT = e1;        :}
 				;  
-e_boolean		::= e_int:e1 EQEQ e_int:e2{: RESULT = (e1 == e2);        :}
+e_boolean		::=/* e_int:e1 EQEQ e_int:e2{: RESULT = (e1 == e2);        :}
 				| e_int:e1 LTEQ e_int:e2	{: RESULT = (((int)e1) <= ((int)e2));        :}
 				| e_int:e1 GTEQ e_int:e2	{: RESULT = (((int)e1) >= ((int)e2));        :}
 				| e_int:e1 NOTEQ e_int:e2	{: RESULT = (((int)e1) != ((int)e2));        :}
@@ -222,14 +222,14 @@ e_boolean		::= e_int:e1 EQEQ e_int:e2{: RESULT = (e1 == e2);        :}
 				| e_int:e1 NOTEQ e_float:e2	{: RESULT = (((float)e1) != ((float)e2));        :}
 				| e_int:e1 LT e_float:e2	{: RESULT = (((float)e1) < ((float)e2));        :}
 				| e_int:e1 GT e_float:e2	{: RESULT = (((float)e1) > ((float)e2));        :}
-/*
-					expr_list:e1 EQEQ expr_list:e2{: RESULT = (e1 == e2);        :}
-				| expr_list:e1 LTEQ expr_list:e2	{: RESULT = (((float)e1) <= ((float)e2));        :}
-				| expr_list:e1 GTEQ expr_list:e2	{: RESULT = (((float)e1) >= ((float)e2));        :}
-				| expr_list:e1 NOTEQ expr_list:e2	{: RESULT = (((float)e1) != ((float)e2));        :}
-				| expr_list:e1 LT expr_list:e2	{: RESULT = (((float)e1) < ((float)e2));        :}
-				| expr_list:e1 GT expr_list:e2	{: RESULT = (((float)e1) > ((float)e2));        :}
 */
+					expr_list:e1 EQEQ expr_list:e2{: RESULT = (e1 == e2);        :}
+				| expr_list:e1 LTEQ expr_list:e2{: RESULT = ((Float.valueOf(String.valueOf(e1))) <= (Float.valueOf(String.valueOf(e2))));   :}
+				| expr_list:e1 GTEQ expr_list:e2{: RESULT = ((Float.valueOf(String.valueOf(e1))) >= (Float.valueOf(String.valueOf(e2))));   :}
+				| expr_list:e1 NOTEQ expr_list:e2{: RESULT = ((Float.valueOf(String.valueOf(e1))) != (Float.valueOf(String.valueOf(e2))));   :}
+				| expr_list:e1 LT expr_list:e2	{: RESULT = ((Float.valueOf(String.valueOf(e1))) < (Float.valueOf(String.valueOf(e2))));		:}
+				| expr_list:e1 GT expr_list:e2	{: RESULT = ((Float.valueOf(String.valueOf(e1))) > (Float.valueOf(String.valueOf(e2))));        :}
+
 				| e_boolean:e1 OR  e_boolean:e2	{: RESULT = (((boolean)e1) || ((boolean)e2));        :}
 				| e_boolean:e1 AND  e_boolean:e2{: RESULT = (((boolean)e1) && ((boolean)e2));        :}
 				| NOT  e_boolean:e1				{: RESULT = !(boolean)e1;        :}
