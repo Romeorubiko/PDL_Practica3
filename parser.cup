@@ -84,22 +84,15 @@ asignacion ::= ID:e1 ASIG expresion:e2				{: System.out.println(e1+" = "+e2);
 															if(variable.id.equals(String.valueOf(e1)))
 																variable.valor = e2;
 														}:}
-			|ID v_exp_list ASIG expresion
+			|ID:e1 v_exp_list ASIG expresion:e2		
 			;    		
 expresion	::= e_int:e 							{: RESULT = e;:}
 			| e_float:e								{: RESULT = e;:}
 			| e_boolean:e 							{: RESULT = e; :}
 			| CHAR:e 								{: RESULT = e; :}
 			;
-v_exp_list  ::= LBRACK e_int:e RBRACK			{:temp.add(e);:}
-			| v_exp_list LBRACK e_int:e RBRACK	{:temp.add(e);:}
-			;
-operando 	::= ENTERO
-			| REAL
-			| BOOLEANO
-			| CARACTER
-			| ID
-			| ID v_exp_list
+v_exp_list  ::= LBRACK e_int:e RBRACK				{:temp.add(e);:}
+			| v_exp_list LBRACK e_int:e RBRACK		{:temp.add(e);:}
 			;
 condicional ::= SI expresion ENTONCES blq_sentencias FINSI
 			| SI expresion ENTONCES
@@ -125,7 +118,10 @@ keytipo		::= ENTERO								{: RESULT = "ENTERO"; :}
 			| BOOLEANO:e							{: RESULT = "BOOLEANO"; :}
 			| CARACTER:e 							{: RESULT = "CARACTER"; :}
 			;
-decl_vector ::= VECTOR keytipo:k ID:e1 v_exp_list:e2{:	if(String.valueOf(k).equals("ENTERO"))variables.add(new Variable("VECTOR",String.valueOf(e1),Array.newInstance(Integer.class, temp.stream().mapToInt(i -> i).toArray())));													
+decl_vector ::= VECTOR keytipo:k ID:e1 v_exp_list:e2{:	if(String.valueOf(k).equals("ENTERO"))variables.add(new Variable("VECTOR_ENTERO",String.valueOf(e1),Array.newInstance(Integer.class, temp.stream().mapToInt(i -> i).toArray())));													
+														else if(String.valueOf(k).equals("REAL"))variables.add(new Variable("VECTOR_REAL",String.valueOf(e1),Array.newInstance(Float.class, temp.stream().mapToInt(i -> i).toArray())));
+														else if(String.valueOf(k).equals("BOOLEANO"))variables.add(new Variable("VECTOR_BOOLEANO",String.valueOf(e1),Array.newInstance(Boolean.class, temp.stream().mapToInt(i -> i).toArray())));
+														else if(String.valueOf(k).equals("CARACTER"))variables.add(new Variable("VECTOR_CARACTER",String.valueOf(e1),Array.newInstance(Character.class, temp.stream().mapToInt(i -> i).toArray())));
 														temp.clear();
 													:}
 			;
