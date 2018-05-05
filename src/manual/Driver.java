@@ -1,8 +1,5 @@
 package manual;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-
 import generado.*;
 import java_cup.runtime.*;
 

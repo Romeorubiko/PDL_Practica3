@@ -1,13 +1,19 @@
 package manual;
 
+import java.util.Arrays;
+
 public class Variable {
 	public String tipo;
 	public String id;
 	public Object valor;
-	
+	public Object[] vector;
+	public Integer[] dimension;
+
+
 	@Override
 	public String toString() {
-		return "[tipo=" + tipo + ", id=" + id + ", valor=" + valor + "]";
+		return "Variable [tipo=" + tipo + ", id=" + id + ", valor=" + valor + ", vector=" + Arrays.toString(vector)
+				+ ", dimension=" + Arrays.toString(dimension) + "]";
 	}
 
 	public String getTipo() {
@@ -40,4 +46,13 @@ public class Variable {
 		this.id = id;
 		this.valor = valor;
 	}
+
+	public Variable(String tipo, String id, Object[] vector, Integer[] dimension) {
+		super();
+		this.tipo = tipo;
+		this.id = id;
+		this.vector = vector;
+		this.dimension = dimension;
+	}
+
 }

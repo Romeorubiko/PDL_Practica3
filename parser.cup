@@ -84,7 +84,20 @@ asignacion ::= ID:e1 ASIG expresion:e2				{: System.out.println(e1+" = "+e2);
 															if(variable.id.equals(String.valueOf(e1)))
 																variable.valor = e2;
 														}:}
-			|ID:e1 v_exp_list ASIG expresion:e2		
+			|ID:e1 v_exp_list ASIG expresion:e2		{:  
+														for (Variable variable : variables) {
+															if(variable.id.equals(String.valueOf(e1))){
+																int pos = temp.get(0) - 1;
+																for(int i = 1 ; i < variable.dimension.length; i++) {
+																	int ponderacion = 1;
+																	for(int j = 0; j < i ; j++) ponderacion = ponderacion * variable.dimension[j];
+																	pos = pos + ponderacion * (temp.get(i)-1); 
+																}
+																variable.vector[pos] = e2;
+																System.out.println(e1+":"+pos+" = "+e2);
+																temp.clear();
+															}
+														}:}
 			;    		
 expresion	::= e_int:e 							{: RESULT = e;:}
 			| e_float:e								{: RESULT = e;:}
@@ -118,10 +131,13 @@ keytipo		::= ENTERO								{: RESULT = "ENTERO"; :}
 			| BOOLEANO:e							{: RESULT = "BOOLEANO"; :}
 			| CARACTER:e 							{: RESULT = "CARACTER"; :}
 			;
-decl_vector ::= VECTOR keytipo:k ID:e1 v_exp_list:e2{:	if(String.valueOf(k).equals("ENTERO"))variables.add(new Variable("VECTOR_ENTERO",String.valueOf(e1),Array.newInstance(Integer.class, temp.stream().mapToInt(i -> i).toArray())));													
-														else if(String.valueOf(k).equals("REAL"))variables.add(new Variable("VECTOR_REAL",String.valueOf(e1),Array.newInstance(Float.class, temp.stream().mapToInt(i -> i).toArray())));
-														else if(String.valueOf(k).equals("BOOLEANO"))variables.add(new Variable("VECTOR_BOOLEANO",String.valueOf(e1),Array.newInstance(Boolean.class, temp.stream().mapToInt(i -> i).toArray())));
-														else if(String.valueOf(k).equals("CARACTER"))variables.add(new Variable("VECTOR_CARACTER",String.valueOf(e1),Array.newInstance(Character.class, temp.stream().mapToInt(i -> i).toArray())));
+decl_vector ::= VECTOR keytipo:k ID:e1 v_exp_list:e2{:	int longitud = 1;
+														for (Integer in : temp) longitud = longitud * in;
+														if(String.valueOf(k).toUpperCase().equals("ENTERO"))variables.add(new Variable("VECTOR_ENTERO",String.valueOf(e1),new Integer[longitud], (Integer[])temp.toArray(new Integer[0])));
+														else if(String.valueOf(k).toUpperCase().equals("REAL"))variables.add(new Variable("VECTOR_REAL",String.valueOf(e1),new Float[longitud], (Integer[])temp.toArray(new Integer[0])));
+														else if(String.valueOf(k).toUpperCase().equals("BOOLEANO"))variables.add(new Variable("VECTOR_BOOLEANO",String.valueOf(e1),new Boolean[longitud], (Integer[])temp.toArray(new Integer[0])));
+														else if(String.valueOf(k).toUpperCase().equals("CARACTER"))variables.add(new Variable("VECTOR_CARACTER",String.valueOf(e1),new Character[longitud], (Integer[])temp.toArray(new Integer[0])));													
+														
 														temp.clear();
 													:}
 			;
@@ -183,15 +199,29 @@ t_float 		::= t_float:e1 TIMES f_float:e2 {: RESULT = e1*e2;        :}
 				;
 				
 f_float 		::=  par_neg DEC_NUMBER:e1		{: RESULT = e1;        :}
-				| impar_neg DEC_NUMBER:e1		{: RESULT = -e1;        :}
+				| impar_neg DEC_NUMBER:e1		{: RESULT = -e1;       :}
 				| par_neg  p_float:e1			{: RESULT = e1;        :}
-				| impar_neg  p_float:e1			{: RESULT = -e1;        :}
+				| impar_neg  p_float:e1			{: RESULT = -e1;       :}
 				| DEC_NUMBER:e1					{: RESULT = e1;        :}
 				| p_float:e1					{: RESULT = e1;        :}
 				| ID:e1							{: for (Variable variable : variables) {
 															if(variable.id.equals(String.valueOf(e1)))
 																RESULT = Float.valueOf(String.valueOf(variable.valor));
 														}       :}
+				| ID:e1	v_exp_list				{:  
+														for (Variable variable : variables) {
+															if(variable.id.equals(String.valueOf(e1))){
+																int pos = temp.get(0) - 1;
+																for(int i = 1 ; i < variable.dimension.length; i++) {
+																	int ponderacion = 1;
+																	for(int j = 0; j < i ; j++) ponderacion = ponderacion * variable.dimension[j];
+																	pos = pos + ponderacion * (temp.get(i)-1); 
+																}
+																temp.clear();
+																System.out.println(e1+":"+pos+"("+variable.vector[pos]+")");
+																RESULT = Float.valueOf(String.valueOf(variable.vector[pos]));
+															}
+														}:}
 				;
 				
 p_float 		::= LPAREN e_float:e1 RPAREN	{: RESULT = e1;        :}
