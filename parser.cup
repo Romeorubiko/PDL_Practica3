@@ -13,6 +13,8 @@ import java.lang.reflect.Array;
 import java.io.IOException;
 import java.io.File;
 import java.io.FileInputStream;
+import manual.ErrorCheck;
+import manual.TypeConvert;
 
 parser code {:
   protected Lexer lexer;
@@ -23,6 +25,7 @@ parser code {:
 /* define how to connect to the scanner! */
 init with {:
   ComplexSymbolFactory f = new ComplexSymbolFactory();
+  ErrorCheck errorCheck = new ErrorCheck();
   symbolFactory = f;
   File file = new File("input1.txt");
   FileInputStream fis = null;
@@ -62,6 +65,8 @@ precedence nonassoc GT, LT, EQ;
 precedence left PLUS, MINUS;
 precedence left TIMES, DIVIDEBY;
 
+
+
 /* The grammar rules */
 blq_sentencias	::= blq_sentencias sentencia
 			| sentencia
@@ -79,11 +84,27 @@ sent_uso 	::= asignacion SEMI
 sent_flujo 		::= condicional
 			| bucle
     		;
-asignacion ::= ID:e1 ASIG expresion:e2				{: System.out.println(e1+" = "+e2); 
+asignacion ::= ID:e1 ASIG expresion:e2				{:
+														ErrorCheck err = new ErrorCheck();
+														TypeConvert conv = new TypeConvert();
+														Boolean declarada = false;
 														for (Variable variable : variables) {
-															if(variable.id.equals(String.valueOf(e1)))
-																variable.valor = e2;
-														}:}
+															if(variable.id.equals(String.valueOf(e1))) {
+																declarada = true;
+																if (err.asignacion_check(variable.tipo, variable.id, e2, "asig")){
+																	if (variable.tipo.equals("REAL")) variable.valor = conv.toReal(e2);
+																	else if (variable.tipo.equals("ENTERO")) variable.valor = conv.toInteger(e2);
+																	else variable.valor = e2;
+ 																System.out.println(e1+" = "+e2); 
+																}
+																break;
+															}
+														}
+													if (!declarada) {
+														System.out.println("Error: "+e1+" = "+e2); 
+														System.out.println("La variable '"+e1+"' no esta declarada");
+													 }
+													:}
 			|ID:e1 v_exp_list ASIG expresion:e2		{:  
 														for (Variable variable : variables) {
 															if(variable.id.equals(String.valueOf(e1))){
@@ -116,7 +137,15 @@ condicional ::= SI expresion ENTONCES blq_sentencias FINSI
 			;
 bucle ::= MIENTRAS expresion blq_sentencias FINMIENTRAS
 			;
-decl_variable ::= keytipo:k ID:e1 ASIG expresion:e2 {: System.out.println(e1+" = "+e2); variables.add(new Variable(String.valueOf(k),String.valueOf(e1),e2)); :}
+decl_variable ::= keytipo:k ID:e1 ASIG expresion:e2 {: ErrorCheck err = new ErrorCheck();
+													   TypeConvert conv = new TypeConvert();
+													if (err.asignacion_check(String.valueOf(k),String.valueOf(e1), e2, "decl")) {
+														System.out.println(e1+" = "+e2); 
+														if (k.equals("REAL")) variables.add(new Variable(String.valueOf(k),String.valueOf(e1), conv.toReal(e2))); 
+														else if (k.equals("INTEGER")) variables.add(new Variable(String.valueOf(k),String.valueOf(e1), conv.toInteger(e2))); 
+														else variables.add(new Variable(String.valueOf(k),String.valueOf(e1), e2)); 								
+													}
+													:}
 			| keytipo:k more_v:e1					{: for (Variable variable : variables) {
 															if(variable.tipo.equals(String.valueOf('c')))
 																variable.tipo = String.valueOf(k);
@@ -155,7 +184,7 @@ uso_funcion ::= ID LPAREN lista_expresiones RPAREN
 */			
 //expresiones
 
-expr_list 	::= e_int:e 						{: RESULT = e; :}
+expr_list 	    ::= e_int:e 					{: RESULT = e; :}
 				| e_float:e						{: RESULT = e; :}
 				;
 /*integer*/

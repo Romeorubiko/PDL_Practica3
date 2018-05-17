@@ -1,13 +1,6 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%% Programa de ejemplo
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%% Declaracion de variables
+REAL r1 = '-';
+CARACTER c = 'c';
+BOOLEANO bo = 5.1;
+ENTERO ent = 6;
+r1 = r1 + 2;
 
-VECTOR ENTERO matriz_i [3][3][3];%% declaración variable vector
-VECTOR BOOLEANO mat [2];
-VECTOR REAL mat [2];
-
-matriz_i[2][2][2] = 5;
-
-ENTERO e = 0;
-e = 5 + matriz_i[2][2][2];

@@ -155,7 +155,7 @@ InputCharacter = [^\r\n]
 	  {Hex_Number} { return symbolFactory.newSymbol("INT_NUMBER", INT_NUMBER, Integer.parseInt(yytext().substring(2, yytext().length()), 16));}
 	  {Oct_Number} { return symbolFactory.newSymbol("INT_NUMBER", INT_NUMBER, Integer.parseInt(yytext().substring(3, yytext().length()), 8));}
       {ScientificNotation} { return  symbolFactory.newSymbol("DEC_NUMBER", DEC_NUMBER, Float.parseFloat(yytext()));}
-      {Identificador} { return  symbolFactory.newSymbol("ID", ID, yytext()); }
+      {Identificador} 	  { return  symbolFactory.newSymbol("ID", ID, yytext()); }
       {Char} 		{ return  symbolFactory.newSymbol("CHAR", CHAR, String.valueOf(yytext()).charAt(1)); }
 
 }

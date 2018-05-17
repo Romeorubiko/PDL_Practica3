@@ -13,6 +13,8 @@ import java.lang.reflect.Array;
 import java.io.IOException;
 import java.io.File;
 import java.io.FileInputStream;
+import manual.ErrorCheck;
+import manual.TypeConvert;
 import java_cup.runtime.ComplexSymbolFactory.Location;
 import java_cup.runtime.XMLElement;
 
@@ -632,6 +634,7 @@ public class Parser extends java_cup.runtime.lr_parser {
 //@@CUPDBG1
 
   ComplexSymbolFactory f = new ComplexSymbolFactory();
+  ErrorCheck errorCheck = new ErrorCheck();
   symbolFactory = f;
   File file = new File("input1.txt");
   FileInputStream fis = null;
@@ -807,11 +810,27 @@ class CUP$Parser$actions {
 		Location e2xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		Object e2 = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
 		//@@CUPDBG3
- System.out.println(e1+" = "+e2); 
+
+														ErrorCheck err = new ErrorCheck();
+														TypeConvert conv = new TypeConvert();
+														Boolean declarada = false;
 														for (Variable variable : variables) {
-															if(variable.id.equals(String.valueOf(e1)))
-																variable.valor = e2;
+															if(variable.id.equals(String.valueOf(e1))) {
+																declarada = true;
+																if (err.asignacion_check(variable.tipo, variable.id, e2, "asig")){
+																	if (variable.tipo.equals("REAL")) variable.valor = conv.toReal(e2);
+																	else if (variable.tipo.equals("ENTERO")) variable.valor = conv.toInteger(e2);
+																	else variable.valor = e2;
+ 																System.out.println(e1+" = "+e2); 
+																}
+																break;
+															}
 														}
+													if (!declarada) {
+														System.out.println("Error: "+e1+" = "+e2); 
+														System.out.println("La variable '"+e1+"' no esta declarada");
+													 }
+													
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("asignacion",7, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-2)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;
@@ -964,7 +983,15 @@ temp.add(e);
 		Location e2xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		Object e2 = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
 		//@@CUPDBG11
- System.out.println(e1+" = "+e2); variables.add(new Variable(String.valueOf(k),String.valueOf(e1),e2)); 
+ ErrorCheck err = new ErrorCheck();
+													   TypeConvert conv = new TypeConvert();
+													if (err.asignacion_check(String.valueOf(k),String.valueOf(e1), e2, "decl")) {
+														System.out.println(e1+" = "+e2); 
+														if (k.equals("REAL")) variables.add(new Variable(String.valueOf(k),String.valueOf(e1), conv.toReal(e2))); 
+														else if (k.equals("INTEGER")) variables.add(new Variable(String.valueOf(k),String.valueOf(e1), conv.toInteger(e2))); 
+														else variables.add(new Variable(String.valueOf(k),String.valueOf(e1), e2)); 								
+													}
+													
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("decl_variable",6, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-3)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;
