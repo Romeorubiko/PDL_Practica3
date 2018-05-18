@@ -6,7 +6,7 @@ public class ErrorCheck {
 		if (k.equals("REAL") && !e2.getClass().getSimpleName().equals("Boolean"))
 				return true;
 		
-		else if (k.equals("BOOLEAN") && e2.getClass().getSimpleName().equals("Boolean")) 
+		else if (k.equals("BOOLEANO") && e2.getClass().getSimpleName().equals("Boolean")) 
 				return true;
 
 		else if (k.equals("ENTERO")&& (e2.getClass().getSimpleName().equals("Integer")||e2.getClass().getSimpleName().equals("Character")))
@@ -25,4 +25,8 @@ public class ErrorCheck {
 
 	}
 	
+	public boolean checkOperation(Object e1, Object e2) {
+		if (e1.getClass().getSimpleName().equals("Boolean")|| e2.getClass().getSimpleName().equals("Boolean")) return false;
+		return true;
+	}
 }

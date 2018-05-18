@@ -1,6 +1,8 @@
-REAL r1 = '-';
-CARACTER c = 'c';
-BOOLEANO bo = 5.1;
-ENTERO ent = 6;
-r1 = r1 + 2;
+ENTERO re1;
+REAL re2;
+BOOLEANO bo = true;
+re1 = -(-(5));
+re2 = 3 + 'c';
+re1 = re1 + true;
+
 
