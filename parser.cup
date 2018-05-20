@@ -20,8 +20,9 @@ parser code {:
   protected Lexer lexer;
   ArrayList<Variable> variables = new ArrayList<>(); 
   ArrayList<Integer> temp = new ArrayList<>();	
+  ArrayList<String> mensajeError = new ArrayList<>();
+  ArrayList<String> salidaParser = new ArrayList<>();
   ErrorCheck err = new ErrorCheck();
-  TypeConvert conv = new TypeConvert();
   Boolean declarada;
 :}
 
@@ -29,7 +30,7 @@ parser code {:
 init with {:
   ComplexSymbolFactory f = new ComplexSymbolFactory();
   symbolFactory = f;
-  File file = new File("input1.txt");
+  File file = new File("input0.txt");
   FileInputStream fis = null;
   try {
     fis = new FileInputStream(file);
@@ -82,6 +83,7 @@ sent_decl 	::= decl_variable SEMI
 			;
 sent_uso 	::= asignacion SEMI
 			| expresion SEMI
+			| error SEMI
 			;
 sent_flujo 		::= condicional
 			| bucle
@@ -91,17 +93,30 @@ asignacion ::= ID:e1 ASIG expresion:e2				{:	declarada = false;
 															if(variable.id.equals(String.valueOf(e1))) {
 																declarada = true;
 																if (err.asignacion_check(variable.tipo, variable.id, e2, "asig")){
-																	if (variable.tipo.equals("REAL")) variable.valor = conv.toReal(e2);
-																	else if (variable.tipo.equals("ENTERO")) variable.valor = conv.toInteger(e2);
+																	if (variable.tipo.equals("REAL")) variable.valor = TypeConvert.toReal(e2);
+																	else if (variable.tipo.equals("ENTERO")) variable.valor = TypeConvert.toInteger(e2);
 																	else variable.valor = e2;
- 																System.out.println(e1+" = "+e2); 
+ 																	System.out.println(e1+" = "+e2); 
+																}
+																else {
+																	if (!String.valueOf(e2).equals("null")){
+																		String message = "Error: "+e1+" = "+e2+" No se puede asignar una variable de tipo "+e2.getClass().getSimpleName()+" a un " +variable.tipo+"\n";
+																		report_error(message, null);
+																	}
+																	else {
+																		String message = "Error: "+e1+" = "+String.valueOf(e2)+" Error de asignacion \n";
+																		report_error(message, null);
+																	}
+																	
 																}
 																break;
 															}
 														}
 													if (!declarada) {
-														System.out.println("Error: "+e1+" = "+e2); 
-														System.out.println("La variable '"+e1+"' no esta declarada");
+														//System.out.println("Error: "+e1+" = "+e2); 
+														//System.out.println("La variable '"+e1+"' no esta declarada");
+														String message = "Error: "+e1+" = "+e2+" La variable '"+e1+"' no esta declarada\n";
+														report_error(message, null);
 													 }
 													:}
 													
@@ -141,9 +156,19 @@ bucle ::= MIENTRAS expresion blq_sentencias FINMIENTRAS
 			;
 decl_variable ::= keytipo:k ID:e1 ASIG expresion:e2 {:	if (err.asignacion_check(String.valueOf(k),String.valueOf(e1), e2, "decl")) {
 														System.out.println(e1+" = "+e2); 
-														if (k.equals("REAL")) variables.add(new Variable(String.valueOf(k),String.valueOf(e1), conv.toReal(e2))); 
-														else if (k.equals("ENTERO")) variables.add(new Variable(String.valueOf(k),String.valueOf(e1), conv.toInteger(e2))); 	
+														if (k.equals("REAL")) variables.add(new Variable(String.valueOf(k),String.valueOf(e1), TypeConvert.toReal(e2))); 
+														else if (k.equals("ENTERO")) variables.add(new Variable(String.valueOf(k),String.valueOf(e1), TypeConvert.toInteger(e2))); 	
 														else variables.add(new Variable(String.valueOf(k),String.valueOf(e1), e2)); 						
+													}
+													else {
+														if (!String.valueOf(e2).equals("null")){
+															String message = "Error: "+k+" "+e1+" = "+e2+" No se puede asignar una variable de tipo "+e2.getClass().getSimpleName()+" a un " +k+"\n";
+															report_error(message, null);
+														}
+														else {
+															String message = "Error: "+k+" "+e1+" = "+String.valueOf(e2)+" Error de asignacion \n";
+															report_error(message, null);
+														}
 													}
 													:}
 			| keytipo:k more_v:e1					{: for (Variable variable : variables) {
@@ -210,21 +235,35 @@ f_int 		::= par_neg INT_NUMBER:e1			{: RESULT = e1;        :}
 p_int 		::= LPAREN e_int:e1 RPAREN			{: RESULT = e1;        :}
 				;*/
 /*float*/
-e_float 		::=	e_float:e1 PLUS t_float:e2	{: if (err.checkOperation(e1, e2)) {
+e_float 		::=	e_float:e1 PLUS t_float:e2	{: if (err.checkOperation(e1, e2)==0) {
 												   		if (e1.getClass().getSimpleName().equals("Float")||e2.getClass().getSimpleName().equals("Float")) {
-System.out.println("Here e1:"+e1.getClass().getSimpleName() +" e2 "+e2.getClass().getSimpleName());
-RESULT = conv.toReal(e1)+conv.toReal(e2);}
-														else if (e1.getClass().getSimpleName().equals("Integer")||e2.getClass().getSimpleName().equals("Integer")) RESULT = conv.toInteger(e1)+conv.toInteger(e2);
+															RESULT = TypeConvert.toReal(e1)+TypeConvert.toReal(e2);}
+														else if (e1.getClass().getSimpleName().equals("Integer")||e2.getClass().getSimpleName().equals("Integer")) RESULT = TypeConvert.toInteger(e1)+TypeConvert.toInteger(e2);
 												   }
-												   else {
-													System.out.println ("No se puede sumar un booleano"); 
-													RESULT = 0;
-												  }      :}
-				| e_float:e1 MINUS t_float:e2	{: if (err.checkOperation(e1, e2)) {
-													if (e1.getClass().getSimpleName().equals("Float")||e2.getClass().getSimpleName().equals("Float")) RESULT = conv.toReal(e1)-conv.toReal(e2);
-														else if (e1.getClass().getSimpleName().equals("Integer")||e2.getClass().getSimpleName().equals("Integer")) RESULT = conv.toInteger(e1)-conv.toInteger(e2);
+												   else if (err.checkOperation(e1, e2)==-2) {
+														String message = "Error: "+e1+"+"+e2+" No se pueden hacer operaciones con booleano\n";
+														report_error(message, null);  
+														
 													}
-												   else System.out.println ("No se puede restar un booleano");        :}
+													else {
+														String message = "Error: "+e1+"+"+e2+" Operandos no validos\n";
+														report_error(message, null);  
+														
+													}  
+      :}
+				| e_float:e1 MINUS t_float:e2	{: if (err.checkOperation(e1, e2)==0) {
+													if (e1.getClass().getSimpleName().equals("Float")||e2.getClass().getSimpleName().equals("Float")) RESULT = TypeConvert.toReal(e1)-TypeConvert.toReal(e2);
+														else if (e1.getClass().getSimpleName().equals("Integer")||e2.getClass().getSimpleName().equals("Integer")) RESULT = TypeConvert.toInteger(e1)-TypeConvert.toInteger(e2);
+													}
+												    else if (err.checkOperation(e1, e2)==-2){
+														String message = "Error: "+e1+"-"+e2+" No se pueden hacer operaciones con booleano\n";
+														report_error(message, null);  
+													} 
+													else {
+														String message = "Error: "+e1+"-"+e2+" Operandos no validos\n";
+														report_error(message, null);  
+														
+													}     :}
 				//| e_float:e1 PLUS t_int:e2		{: RESULT = e1+e2;        :}
 				//| e_float:e1 MINUS t_int:e2		{: RESULT = e1-e2;        :}
 				//| e_int:e1 PLUS t_float:e2		{: RESULT = e1+e2;        :}
@@ -233,18 +272,31 @@ RESULT = conv.toReal(e1)+conv.toReal(e2);}
 
 				;
 				
-t_float 		::= t_float:e1 TIMES f_float:e2 {: if (err.checkOperation(e1, e2)) {
-												   if (e1.getClass().getSimpleName().equals("Float")||e2.getClass().getSimpleName().equals("Float")) RESULT = conv.toReal(e1)*conv.toReal(e2);
-													else if (e1.getClass().getSimpleName().equals("Integer")||e2.getClass().getSimpleName().equals("Integer")) RESULT = conv.toInteger(e1)*conv.toInteger(e2);
+t_float 		::= t_float:e1 TIMES f_float:e2 {: if (err.checkOperation(e1, e2)==0) {
+												   if (e1.getClass().getSimpleName().equals("Float")||e2.getClass().getSimpleName().equals("Float")) RESULT = TypeConvert.toReal(e1)*TypeConvert.toReal(e2);
+													else if (e1.getClass().getSimpleName().equals("Integer")||e2.getClass().getSimpleName().equals("Integer")) RESULT = TypeConvert.toInteger(e1)*TypeConvert.toInteger(e2);
 												   }
-												    else {
-													 System.out.println ("No se puede multiplicar un booleano");
-													 //RESULT = 1;
+												   else if (err.checkOperation(e1, e2)==-2) {
+														String message = "Error: "+e1+"*"+e2+" No se pueden hacer operaciones con booleano\n";
+														report_error(message, null); 
+													} 
+													else {
+														String message = "Error: "+e1+"*"+e2+" Operandos no validos\n";
+														report_error(message, null);  
+														
 													}        :}
-				| t_float:e1 DIVIDEBY f_float:e2{: if (err.checkOperation(e1, e2)) {
-													RESULT = conv.toReal(e1)/conv.toReal(e2);
+				| t_float:e1 DIVIDEBY f_float:e2{: if (err.checkOperation(e1, e2)==0) {
+													RESULT = TypeConvert.toReal(e1)/TypeConvert.toReal(e2);
 													}  
-												   else System.out.println ("No se puede dividir un booleano");       :}
+												   else if (err.checkOperation(e1, e2)==-2){
+														String message = "Error: "+e1+"/"+e2+" No se pueden hacer operaciones con booleano\n";
+														report_error(message, null);  
+													} 
+													else {
+														String message = "Error: "+e1+"/"+e2+" Operandos no validos\n";
+														report_error(message, null);  
+														
+													}      :}
 				//| t_float:e1 TIMES f_int:e2 	{: RESULT = e1*e2;        :}
 				//| t_float:e1 DIVIDEBY f_int:e2	{: RESULT = e1/e2.floatValue();        :}
 				//| t_int:e1 TIMES f_float:e2 	{: RESULT = e1*e2;        :}
@@ -257,13 +309,13 @@ f_float 		::=  par_neg INT_NUMBER:e1		{: RESULT = TypeConvert.toInteger(e1);    
 				| impar_neg INT_NUMBER:e1		{: RESULT = -TypeConvert.toInteger(e1);       :}
 				| INT_NUMBER:e1					{: RESULT = TypeConvert.toInteger(e1);          :}
 				| CHAR:e1						{: RESULT = TypeConvert.toInteger(e1);        :}
-				|par_neg DEC_NUMBER:e1		    {: RESULT = conv.toReal(e1);        :}
-				| impar_neg DEC_NUMBER:e1		{: RESULT = -conv.toReal(e1);       :}
+				|par_neg DEC_NUMBER:e1		    {: RESULT = TypeConvert.toReal(e1);        :}
+				| impar_neg DEC_NUMBER:e1		{: RESULT = -TypeConvert.toReal(e1);       :}
 				| par_neg  p_float:e1			{: if (e1.getClass().getSimpleName().equals("Float")) RESULT = TypeConvert.toReal(e1);
 												   else  RESULT=TypeConvert.toInteger(e1);           :}
 				| impar_neg  p_float:e1			{: if (e1.getClass().getSimpleName().equals("Float")) RESULT = -TypeConvert.toReal(e1);
 												   else  RESULT=-TypeConvert.toInteger(e1);     :}
-				| DEC_NUMBER:e1					{: RESULT = conv.toReal(e1);        :}
+				| DEC_NUMBER:e1					{: RESULT = TypeConvert.toReal(e1);        :}
 				| p_float:e1					{: RESULT = e1;        :}
 				
 				| ID:e1							{: for (Variable variable : variables) {
@@ -271,8 +323,10 @@ f_float 		::=  par_neg INT_NUMBER:e1		{: RESULT = TypeConvert.toInteger(e1);    
 																if (variable.tipo.equals("REAL")) RESULT = TypeConvert.toReal(variable.valor);
 																else if (variable.tipo.equals("ENTERO")) RESULT = TypeConvert.toInteger(variable.valor);
 																else {
-																 System.out.println ("No se puede hacer operaciones con booleano");
-																 RESULT = 0;
+																 String message = "Error: "+e1+" No se pueden hacer operaciones con booleano\n";
+																 report_error(message, null);
+																 //System.out.println ("No se puede hacer operaciones con booleano");
+																 //RESULT = 0;
 																}
 															}
 														}       :}
@@ -290,9 +344,10 @@ f_float 		::=  par_neg INT_NUMBER:e1		{: RESULT = TypeConvert.toInteger(e1);    
 																System.out.println(e1+":"+pos+"("+variable.vector[pos]+")");
 																RESULT = Float.valueOf(String.valueOf(variable.vector[pos]));
 															}
-														}:}		
+														}:}	
 				| NOT  e_boolean:e1				{: RESULT = !(boolean)e1;        :}
-				| BOOLEAN_LITERAL:e1			{: RESULT = e1;        :}
+				| BOOLEAN_LITERAL:e1			{: RESULT = e1;        :}	
+
 														;
 				
 				
@@ -337,6 +392,7 @@ e_boolean		::=/* e_int:e1 EQEQ e_int:e2{: RESULT = (e1 == e2);        :}
 
 				| e_boolean:e1 OR  e_boolean:e2	{: RESULT = (((boolean)e1) || ((boolean)e2));        :}
 				| e_boolean:e1 AND  e_boolean:e2{: RESULT = (((boolean)e1) && ((boolean)e2));        :}
+								
 
 				;				
 //sustitucion de uminus				      

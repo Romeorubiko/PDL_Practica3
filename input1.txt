@@ -1,8 +1,7 @@
-ENTERO re1;
 REAL re2;
-BOOLEANO bo = true;
-re1 = -(-(5));
-re2 = 3 + 'c';
-re1 = re1 + true;
+re2 = true*3;
+
+
+
 
 

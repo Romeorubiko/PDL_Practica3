@@ -3,6 +3,8 @@ package manual;
 public class ErrorCheck {
 	
 	public boolean asignacion_check (String k, String e1, Object e2, String type) {
+		System.out.println(String.valueOf(e2));
+		if(String.valueOf(e2).equals("null")) return false;
 		if (k.equals("REAL") && !e2.getClass().getSimpleName().equals("Boolean"))
 				return true;
 		
@@ -17,16 +19,18 @@ public class ErrorCheck {
 		
 		
 		else {
-			if (type.equals("asig")) System.out.println ("Error: "+e1+" = "+String.valueOf(e2));
-			else if (type.equals("decl")) System.out.println ("Error: "+k+" "+e1+" = "+String.valueOf(e2));
-			System.out.println ("No se puede asignar una variable de tipo "+e2.getClass().getSimpleName()+ " a un "+k);
+			//if (type.equals("asig")) System.out.println ("Error: "+e1+" = "+String.valueOf(e2));
+			//else if (type.equals("decl")) System.out.println ("Error: "+k+" "+e1+" = "+String.valueOf(e2));
+			//System.out.println ("No se puede asignar una variable de tipo "+e2.getClass().getSimpleName()+ " a un "+k);
 			return false;
 		}
 
 	}
 	
-	public boolean checkOperation(Object e1, Object e2) {
-		if (e1.getClass().getSimpleName().equals("Boolean")|| e2.getClass().getSimpleName().equals("Boolean")) return false;
-		return true;
+	public int checkOperation(Object e1, Object e2) {
+		if(String.valueOf(e1).equals("null")) return -1;
+		if(String.valueOf(e2).equals("null")) return -1;
+		if (e1.getClass().getSimpleName().equals("Boolean")|| e2.getClass().getSimpleName().equals("Boolean")) return -2;
+		return 0;
 	}
 }
