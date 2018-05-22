@@ -15,6 +15,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import manual.ErrorCheck;
 import manual.TypeConvert;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java_cup.runtime.ComplexSymbolFactory.Location;
 import java_cup.runtime.XMLElement;
 
@@ -527,6 +530,10 @@ public class Parser extends java_cup.runtime.lr_parser {
   symbolFactory = f;
   File file = new File("input1.txt");
   FileInputStream fis = null;
+  br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+
+
+
   try {
     fis = new FileInputStream(file);
   } catch (IOException e) {
@@ -542,18 +549,24 @@ public class Parser extends java_cup.runtime.lr_parser {
     throws java.lang.Exception
     {
 //@@CUPDBG2
-  return lexer.next_token();
+   Symbol s = lexer.next_token();
+			  /* if (String.valueOf(s).equals("Symbol: SI")||String.valueOf(s).equals("Symbol: FINSI")||
+				   String.valueOf(s).equals("Symbol: MIENTRAS")||String.valueOf(s).equals("Symbol: ENTONCES")||
+				   String.valueOf(s).equals("Symbol: FINMIENTRAS")) { System.out.print("HERE");lectura = br.readLine();}*/
+               return s;
  
     }
 
 //@@CUPDBG0
 
   protected Lexer lexer;
-  ArrayList<Variable> variables = new ArrayList<>(); 
+  public ArrayList<Variable> variables = new ArrayList<>(); 
   ArrayList<Integer> temp = new ArrayList<>();	
   public ArrayList<String> mensajeError = new ArrayList<>();
   public ArrayList<String> salidaParser = new ArrayList<>();
   ErrorCheck err = new ErrorCheck();
+  String lectura;
+  BufferedReader br; 
   Boolean declarada;
 
 
@@ -685,7 +698,7 @@ class CUP$Parser$actions {
 		Location e1xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		Object e1 = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
 		//@@CUPDBG3
- RESULT = e1;        
+ RESULT = e1;
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("sent_uso",4, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;
@@ -731,12 +744,13 @@ class CUP$Parser$actions {
 																	salidaParser.add(message);
 																}
 																else {
-																	if (!String.valueOf(e2).equals("null")){
-																		String message = "Error: "+e1+" = "+e2+"\n No se puede asignar una variable de tipo "+e2.getClass().getSimpleName()+" a un " +variable.tipo+"\n";
+																	if (!String.valueOf(e2).equals("null")){																		
+																		String message = "Error: "+e1+" = "+e2+"\nNo se puede asignar una variable de tipo "+e2.getClass().getSimpleName()+" a un " +variable.tipo+"\n";
 																		mensajeError.add(message);
 																	}
 																	else {
-																		String message = "Error: "+e1+" = "+String.valueOf(e2)+"\n Fallo de asignacion \n";
+																			
+																		String message = "Error: "+e1+" = "+String.valueOf(e2)+"\nFallo de asignacion \n";
 																		mensajeError.add(message);
 																	}
 																	
@@ -745,7 +759,7 @@ class CUP$Parser$actions {
 															}
 														}
 													if (!declarada) {
-														String message = "Error: "+e1+" = "+e2+"\n La variable '"+e1+"' no esta declarada\n";
+														String message = "Error: "+e1+" = "+e2+"\nLa variable '"+e1+"' no esta declarada\n";
 														mensajeError.add(message);
 													 }
 													
@@ -844,7 +858,7 @@ class CUP$Parser$actions {
 		Object e = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-3)).value;
 		//@@CUPDBG10
  if (!e.getClass().getSimpleName().equals("Boolean")) {
-																	String message = "Error: SI "+e+" ENTONCES\n   '"+e+"' debe ser una expresion booleana\n";
+																	String message = "Error: SI "+e+" ENTONCES\n'"+e+"' debe ser una expresion booleana\n";
 																	mensajeError.add(message);
 																}
 															  
@@ -861,7 +875,7 @@ class CUP$Parser$actions {
 		Object e = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-5)).value;
 		//@@CUPDBG11
  if (!e.getClass().getSimpleName().equals("Boolean")) {
-																	String message = "Error: SI "+e+" ENTONCES\n   '"+e+"' debe ser una expresion booleana\n";
+																	String message = "Error: SI "+e+" ENTONCES\n'"+e+"' debe ser una expresion booleana\n";
 																	mensajeError.add(message);
 																}
 															  
@@ -1077,12 +1091,13 @@ String message = "Declarado: "+e1;
 														else if (e1.getClass().getSimpleName().equals("Integer")||e2.getClass().getSimpleName().equals("Integer")) RESULT = TypeConvert.toInteger(e1)+TypeConvert.toInteger(e2);
 												   }
 												   else if (err.checkOperation(e1, e2)==-2) {
-														String message = "Error: "+e1+"+"+e2+"\n No se pueden hacer operaciones con booleano\n";
+														String message = "Error: "+e1+"+"+e2+"\nNo se pueden hacer operaciones con booleano\n";
+														//String message = "Error: "+lectura+"\n No se pueden hacer operaciones con booleano\n";
 														mensajeError.add(message);  
 	
 													}
 													else {
-														String message = "Error: "+e1+"+"+e2+"\n Operandos no validos\n";
+														String message = "Error: "+e1+"+"+e2+"\nOperandos no validos\n";
 														//report_error(message, null); 
 														mensajeError.add(message); 
 														
@@ -1108,12 +1123,12 @@ String message = "Declarado: "+e1;
 														else if (e1.getClass().getSimpleName().equals("Integer")||e2.getClass().getSimpleName().equals("Integer")) RESULT = TypeConvert.toInteger(e1)-TypeConvert.toInteger(e2);
 													}
 												    else if (err.checkOperation(e1, e2)==-2){
-														String message = "Error: "+e1+"-"+e2+"\n No se pueden hacer operaciones con booleano\n";
+														String message = "Error: "+e1+"-"+e2+"\nNo se pueden hacer operaciones con booleano\n";
 														//report_error(message, null);  
 														mensajeError.add(message);
 													} 
 													else {
-														String message = "Error: "+e1+"-"+e2+"\n Operandos no validos\n";
+														String message = "Error: "+e1+"-"+e2+"\nOperandos no validos\n";
 														//report_error(message, null); 
 														mensajeError.add(message); 
 														
@@ -1151,12 +1166,12 @@ String message = "Declarado: "+e1;
 													else if (e1.getClass().getSimpleName().equals("Integer")||e2.getClass().getSimpleName().equals("Integer")) RESULT = TypeConvert.toInteger(e1)*TypeConvert.toInteger(e2);
 												   }
 												   else if (err.checkOperation(e1, e2)==-2) {
-														String message = "Error: "+e1+"*"+e2+"\n No se pueden hacer operaciones con booleano\n";
+														String message = "Error: "+e1+"*"+e2+"\nNo se pueden hacer operaciones con booleano\n";
 														//report_error(message, null); 
 														mensajeError.add(message);
 													} 
 													else {
-														String message = "Error: "+e1+"*"+e2+"\n Operandos no validos\n";
+														String message = "Error: "+e1+"*"+e2+"\nOperandos no validos\n";
 														//report_error(message, null);  
 														mensajeError.add(message);
 														
@@ -1180,12 +1195,12 @@ String message = "Declarado: "+e1;
 													RESULT = TypeConvert.toReal(e1)/TypeConvert.toReal(e2);
 													}  
 												   else if (err.checkOperation(e1, e2)==-2){
-														String message = "Error: "+e1+"/"+e2+"\n No se pueden hacer operaciones con booleano\n";
+														String message = "Error: "+e1+"/"+e2+"\nNo se pueden hacer operaciones con booleano\n";
 														//report_error(message, null); 
 														mensajeError.add(message); 
 													} 
 													else {
-														String message = "Error: "+e1+"/"+e2+"\n Operandos no validos\n";
+														String message = "Error: "+e1+"/"+e2+"\nOperandos no validos\n";
 														//report_error(message, null);
 														mensajeError.add(message);  
 														
@@ -1440,7 +1455,11 @@ String message = "Declarado: "+e1;
 		Location e2xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		Object e2 = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
 		//@@CUPDBG44
- RESULT = (e1 == e2);        
+ 	if (err.checkOperation(e1, e2)==0) {
+														RESULT = (e1 == e2); 
+													}
+												 
+													
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("e_boolean",29, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-2)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;

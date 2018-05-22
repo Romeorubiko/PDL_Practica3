@@ -1,10 +1,39 @@
-REAL re2;
-re2 = 4*3;
-BOOLEANO bo = true;
-SI true ENTONCES %% a es el máximo
-bo = false;
-FINSI
-ENTERO r3 = -((+5+2-1))+5+true;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  %% Programa de ejemplo %%  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+%%%%%% Declaracion de variables  
+REAL re1;  ENTERO en2 <- 6; %% con asignación de valor  
+BOOLEANO bo3 <- 5<3; %% se asigna el resultado de una expresión  
+CARACTER ca4 <- ‘h’; %% variable de tipo carácter, y su literal 
+VECTOR REAL punto1[3]; %% declaración variable vector (no permite asignación al mismo tiempo que la declaracion 
+ 
+ 
+%%%%%% Expresiones  
+5 + 6; %% operacion  
+re1 <- 3.7; %% asignación simple  
+punto1[1] <- 0.0; %% posición 1 de variable vector 
+punto1[2] <- 0.0; %% posición 2 de variable vector 
+punto1[3] <- 10.0; %% posición 3 de variable vector 
+ 
+%%%%%% Sentencia condicional de control de flujo  
+SI en2==3 OR bo3 AND re1 %% condición 
+ENTONCES %% cuerpo cuando la condición es verdadera      
+en2 <- en2+3;  
+SINO %% cuerpo cuando la condición es falsa      
+re1 <- 10-en2*en2;  FINSI %% fin de la sentencia  
+ 
+%%%%%% Sentencia de control de flujo bucle condicional  
+seguir <- true; 
+
+MIENTRAS seguir AND punto1.radio>0 %% bucle condicional 
+SI punto1.cx <0 AND punto1.cy <0 %% cuerpo si condición verdadera
+seguir <- false;  
+SINO %% cuerpo cuando la condición es falsa
+seguir <- true; 
+FINSI %% fin de condicional 
+punto1[1] <- punto1[1]/2.0; 
+punto1[2] <- punto1[2] – 1.0; 
+punto1[3] <- punto1[3] – 1.0;   
+FINMIENTRAS %% fin de bucle MIENTRAS  
+
 
 
 

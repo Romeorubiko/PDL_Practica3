@@ -1,5 +1,8 @@
 package manual;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import generado.*;
@@ -11,10 +14,10 @@ class Driver {
 		Parser parser = new Parser();
 		int i;
 		parser.parse();
-		
 		if (parser.mensajeError.isEmpty()) {
-			for (i=0; i<parser.salidaParser.size(); i++) {
-				System.out.println(parser.salidaParser.get(i));
+			System.out.println("----------------------Variables declaradas----------------------\n");
+			for (i=0; i<parser.variables.size(); i++) {
+				System.out.println(parser.variables.get(i).id+" 		Tipo: "+parser.variables.get(i).tipo+"	 	Valor final: "+parser.variables.get(i).valor);
 			}
 		}
 		else {
