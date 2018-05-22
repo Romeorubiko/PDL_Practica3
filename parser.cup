@@ -52,11 +52,7 @@ init with {:
   lexer = new Lexer(f,fis);
 
 :};
-scan with {:   Symbol s = lexer.next_token();
-			  /* if (String.valueOf(s).equals("Symbol: SI")||String.valueOf(s).equals("Symbol: FINSI")||
-				   String.valueOf(s).equals("Symbol: MIENTRAS")||String.valueOf(s).equals("Symbol: ENTONCES")||
-				   String.valueOf(s).equals("Symbol: FINMIENTRAS")) { System.out.print("HERE");lectura = br.readLine();}*/
-               return s;
+scan with {: return lexer.next_token();
  :};
  
 
@@ -112,7 +108,7 @@ asignacion ::= ID:e1 ASIG expresion:e2				{:	declarada = false;
 														for (Variable variable : variables) {
 															if(variable.id.equals(String.valueOf(e1))) {
 																declarada = true;
-																if (err.asignacion_check(variable.tipo, variable.id, e2, "asig")){
+																if (err.asignacion_check(variable.tipo, e2)){
 																	if (variable.tipo.equals("REAL")) variable.valor = TypeConvert.toReal(e2);
 																	else if (variable.tipo.equals("ENTERO")) variable.valor = TypeConvert.toInteger(e2);
 																	else variable.valor = e2;
@@ -140,21 +136,49 @@ asignacion ::= ID:e1 ASIG expresion:e2				{:	declarada = false;
 													 }
 													:}
 													
-			|ID:e1 v_exp_list ASIG expresion:e2		{:  
+			|ID:e1 v_exp_list ASIG expresion:e2		{:  declarada = false;
+												
+												
 														for (Variable variable : variables) {
 															if(variable.id.equals(String.valueOf(e1))){
+																declarada = true;
+																													
+																/*if (!temp.get(0).getClass().getSimpleName().equals("Integer")||temp.get(0) - 1<0) {
+																	String message = "Error: "+e1+" = "+e2+"\nLa posicion del vector tiene que ser un entero positivo\n";
+																	mensajeError.add(message);
+																}*/
 																int pos = temp.get(0) - 1;
 																for(int i = 1 ; i < variable.dimension.length; i++) {
 																	int ponderacion = 1;
 																	for(int j = 0; j < i ; j++) ponderacion = ponderacion * variable.dimension[j];
 																	pos = pos + ponderacion * (temp.get(i)-1); 
 																}
-																variable.vector[pos] = e2;
-																String message = e1+":"+pos+" = "+e2;
-																salidaParser.add(message);
+																
+																
+																if (err.asignacion_check(variable.tipo, e2)){
+																	if (variable.tipo.equals("VECTOR_REAL")) variable.vector[pos] = TypeConvert.toReal(e2);
+																	else if (variable.tipo.equals("VECTOR_ENTERO")) variable.vector[pos] = TypeConvert.toInteger(e2);
+																	else variable.vector[pos] = e2;
+																}
+																else {
+																	if (!String.valueOf(e2).equals("null")){																		
+																		String message = "Error: "+e1+" = "+e2+"\nNo se puede asignar una variable de tipo "+e2.getClass().getSimpleName()+" a un " +variable.tipo+"\n";
+																		mensajeError.add(message);
+																	}
+																	else {
+																		String message = "Error: "+e1+" = "+String.valueOf(e2)+"\nFallo de asignacion \n";
+																		mensajeError.add(message);
+																	}
+																	
+																}
+																
 																temp.clear();
 															}
-														}:}
+														}
+														if (!declarada) {
+														String message = "Error: "+e1+" = "+e2+"\nLa variable '"+e1+"' no esta declarada\n";
+														mensajeError.add(message);
+													 }:}
 														
 	      
 			;    		
@@ -162,10 +186,17 @@ expresion	::= e_float:e 							{: RESULT = e;:}
 			| e_boolean:e 							{: RESULT = e;:}
 			;
 			
-v_exp_list  ::= LBRACK e_float:e RBRACK				{: if (e.getClass().getSimpleName().equals("Integer")) temp.add(TypeConvert.toInteger(e));:}
-			| v_exp_list LBRACK e_float:e RBRACK	{: if (e.getClass().getSimpleName().equals("Integer")) temp.add(TypeConvert.toInteger(e));:}
+v_exp_list  ::= LBRACK e_float:e RBRACK				{: if (String.valueOf(e).equals("null")||!e.getClass().getSimpleName().equals("Integer")) {
+													   	String message = "Error: ["+e+"]\n"+e+"La posicion de un vector tiene que ser un entero\n";
+													   	mensajeError.add(message); }
+													   else if (e.getClass().getSimpleName().equals("Integer")) temp.add(TypeConvert.toInteger(e));
+													   :}
+			| v_exp_list LBRACK e_float:e RBRACK	{: if (String.valueOf(e).equals("null")||!e.getClass().getSimpleName().equals("Integer")) {
+													   	String message = "Error: ["+e+"]\n"+e+"La posicion de un vector tiene que ser un entero\n";
+													   	mensajeError.add(message); }
+														else if (e.getClass().getSimpleName().equals("Integer")) temp.add(TypeConvert.toInteger(e));:}
 			;
-condicional ::= SI expresion:e ENTONCES blq_sentencias FINSI {: if (!e.getClass().getSimpleName().equals("Boolean")) {
+condicional ::= SI expresion:e ENTONCES blq_sentencias FINSI {: if (String.valueOf(e).equals("null") || !e.getClass().getSimpleName().equals("Boolean")) {
 																	String message = "Error: SI "+e+" ENTONCES\n'"+e+"' debe ser una expresion booleana\n";
 																	mensajeError.add(message);
 																}
@@ -174,7 +205,7 @@ condicional ::= SI expresion:e ENTONCES blq_sentencias FINSI {: if (!e.getClass(
 			blq_sentencias
 			SINO
 			blq_sentencias
-			FINSI											{: if (!e.getClass().getSimpleName().equals("Boolean")) {
+			FINSI											{: if (String.valueOf(e).equals("null") ||!e.getClass().getSimpleName().equals("Boolean")) {
 																	String message = "Error: SI "+e+" ENTONCES\n'"+e+"' debe ser una expresion booleana\n";
 																	mensajeError.add(message);
 																}
@@ -186,7 +217,7 @@ bucle ::= MIENTRAS expresion:e blq_sentencias FINMIENTRAS   {: if (!e.getClass()
 																}
 															  :}
 			;
-decl_variable ::= keytipo:k ID:e1 ASIG expresion:e2 {:	if (err.asignacion_check(String.valueOf(k),String.valueOf(e1), e2, "decl")) {
+decl_variable ::= keytipo:k ID:e1 ASIG expresion:e2 {:	if (err.asignacion_check(String.valueOf(k),e2)) {
 														String message = e1+" = "+e2; 
 														salidaParser.add(message);
 														if (k.equals("REAL")) variables.add(new Variable(String.valueOf(k),String.valueOf(e1), TypeConvert.toReal(e2))); 
@@ -387,10 +418,10 @@ f_float 		::=  par_neg INT_NUMBER:e1		{: RESULT = TypeConvert.toInteger(e1);    
 																	for(int j = 0; j < i ; j++) ponderacion = ponderacion * variable.dimension[j];
 																	pos = pos + ponderacion * (temp.get(i)-1); 
 																}
-																temp.clear();
-																String message = e1+":"+pos+"("+variable.vector[pos]+")";
-																salidaParser.add(message);
-																RESULT = Float.valueOf(String.valueOf(variable.vector[pos]));
+																if (variable.tipo.equals("VECTOR_REAL")) RESULT = TypeConvert.toReal(variable.vector[pos]);
+																else if (variable.tipo.equals("VECTOR_ENTERO") || variable.tipo.equals("VECTOR_CARACTER")) RESULT = TypeConvert.toInteger(variable.vector[pos]);
+																else if (variable.tipo.equals("VECTOR_BOOLEANO")) RESULT = variable.vector[pos];
+															    temp.clear();
 															}
 														}:}	
 
@@ -404,50 +435,87 @@ p_float 		::= LPAREN e_float:e1 RPAREN	{: RESULT = e1;        :};
 		
 
 				 
-e_boolean		::=/* e_int:e1 EQEQ e_int:e2{: RESULT = (e1 == e2);        :}
-				| e_int:e1 LTEQ e_int:e2	{: RESULT = (((int)e1) <= ((int)e2));        :}
-				| e_int:e1 GTEQ e_int:e2	{: RESULT = (((int)e1) >= ((int)e2));        :}
-				| e_int:e1 NOTEQ e_int:e2	{: RESULT = (((int)e1) != ((int)e2));        :}
-				| e_int:e1 LT e_int:e2	{: RESULT = (((int)e1) < ((int)e2));        :}
-				| e_int:e1 GT e_int:e2	{: RESULT = (((int)e1) > ((int)e2));        :}
-
-				| e_float:e1 EQEQ e_float:e2{: RESULT = (e1 == e2);        :}
-				| e_float:e1 LTEQ e_float:e2	{: RESULT = (((float)e1) <= ((float)e2));        :}
-				| e_float:e1 GTEQ e_float:e2	{: RESULT = (((float)e1) >= ((float)e2));        :}
-				| e_float:e1 NOTEQ e_float:e2	{: RESULT = (((float)e1) != ((float)e2));        :}
-				| e_float:e1 LT e_float:e2	{: RESULT = (((float)e1) < ((float)e2));        :}
-				| e_float:e1 GT e_float:e2	{: RESULT = (((float)e1) > ((float)e2));        :}
-				
-				| e_float:e1 EQEQ e_int:e2{: RESULT = (e1 == e2.floatValue());        :}
-				| e_float:e1 LTEQ e_int:e2	{: RESULT = (((float)e1) <= ((float)e2));        :}
-				| e_float:e1 GTEQ e_int:e2	{: RESULT = (((float)e1) >= ((float)e2));        :}
-				| e_float:e1 NOTEQ e_int:e2	{: RESULT = (((float)e1) != ((float)e2));        :}
-				| e_float:e1 LT e_int:e2	{: RESULT = (((float)e1) < ((float)e2));        :}
-				| e_float:e1 GT e_int:e2	{: RESULT = (((float)e1) > ((float)e2));        :}
-				
-				| e_int:e1 EQEQ e_float:e2{: RESULT = (e1.floatValue() == e2);        :}
-				| e_int:e1 LTEQ e_float:e2	{: RESULT = (((float)e1) <= ((float)e2));        :}
-				| e_int:e1 GTEQ e_float:e2	{: RESULT = (((float)e1) >= ((float)e2));        :}
-				| e_int:e1 NOTEQ e_float:e2	{: RESULT = (((float)e1) != ((float)e2));        :}
-				| e_int:e1 LT e_float:e2	{: RESULT = (((float)e1) < ((float)e2));        :}
-				| e_int:e1 GT e_float:e2	{: RESULT = (((float)e1) > ((float)e2));        :}
-*/
-				expr_list:e1 EQEQ expr_list:e2{: 	if (err.checkOperation(e1, e2)==0) {
-														RESULT = (e1 == e2); 
+e_boolean		::=	expr_list:e1 EQEQ expr_list:e2{:    
+														if (err.checkOperation(e1, e2)==0) {
+														RESULT = (e1.equals(e2)); 
+													}
+													else if (err.checkOperation(e1, e2)==-2) {
+														String message = "Error: "+e1+"=="+e2+"\nNo se puede comparar booleanos\n";
+														mensajeError.add(message);
+													}
+													else {
+														 String message = "Error: "+e1+"=="+e2+"\nOperandos no validos\n";
+														mensajeError.add(message);
 													}
 												 
 													:}
-				| expr_list:e1 LTEQ expr_list:e2{: RESULT = ((Float.valueOf(String.valueOf(e1))) <= (Float.valueOf(String.valueOf(e2))));   :}
-				| expr_list:e1 GTEQ expr_list:e2{: RESULT = ((Float.valueOf(String.valueOf(e1))) >= (Float.valueOf(String.valueOf(e2))));   :}
-				| expr_list:e1 NOTEQ expr_list:e2{: RESULT = ((Float.valueOf(String.valueOf(e1))) != (Float.valueOf(String.valueOf(e2))));   :}
-				| expr_list:e1 LT expr_list:e2	{: RESULT = ((Float.valueOf(String.valueOf(e1))) < (Float.valueOf(String.valueOf(e2))));		:}
-				| expr_list:e1 GT expr_list:e2	{: RESULT = ((Float.valueOf(String.valueOf(e1))) > (Float.valueOf(String.valueOf(e2))));        :}
+				| expr_list:e1 LTEQ expr_list:e2{:  if (err.checkOperation(e1, e2)==0) {
+														RESULT = ((Float.valueOf(String.valueOf(e1))) <= (Float.valueOf(String.valueOf(e2))));
+													}
+													else if (err.checkOperation(e1, e2)==-2) {
+														String message = "Error: "+e1+"<="+e2+"\nNo se puede comparar booleanos\n";
+														mensajeError.add(message);
+													}
+													else {
+														 String message = "Error: "+e1+"<="+e2+"\nOperandos no validos\n";
+														mensajeError.add(message);
+													}
+												  :}
+												   
+				| expr_list:e1 GTEQ expr_list:e2{:  
+													if (err.checkOperation(e1, e2)==0) {
+														RESULT = ((Float.valueOf(String.valueOf(e1))) >= (Float.valueOf(String.valueOf(e2))));
+													}
+													else if (err.checkOperation(e1, e2)==-2) {
+														String message = "Error: "+e1+">="+e2+"\nNo se puede comparar booleanos\n";
+														mensajeError.add(message);
+													}
+													else {
+														 String message = "Error: "+e1+">="+e2+"\nOperandos no validos\n";
+														mensajeError.add(message);
+													}
+   												:}
+				| expr_list:e1 NOTEQ expr_list:e2{: if (err.checkOperation(e1, e2)==0) {
+														RESULT = ((Float.valueOf(String.valueOf(e1))) != (Float.valueOf(String.valueOf(e2))));
+													}
+													else if (err.checkOperation(e1, e2)==-2) {
+														String message = "Error: "+e1+"!="+e2+"\nNo se puede comparar booleanos\n";
+														mensajeError.add(message);
+													}
+													else {
+														 String message = "Error: "+e1+"!="+e2+"\nOperandos no validos\n";
+														mensajeError.add(message);
+													}
+   												:}
+				| expr_list:e1 LT expr_list:e2	{: if (err.checkOperation(e1, e2)==0) {
+														RESULT = ((Float.valueOf(String.valueOf(e1))) < (Float.valueOf(String.valueOf(e2))));
+													}
+													else if (err.checkOperation(e1, e2)==-2) {
+														String message = "Error: "+e1+"<"+e2+"\nNo se puede comparar booleanos\n";
+														mensajeError.add(message);
+													}
+													else {
+														String message = "Error: "+e1+"<"+e2+"\nOperandos no validos\n";
+														mensajeError.add(message);
+													}
+												:}
+				| expr_list:e1 GT expr_list:e2	{: if (err.checkOperation(e1, e2)==0) {
+														RESULT = ((Float.valueOf(String.valueOf(e1))) > (Float.valueOf(String.valueOf(e2))));
+													}
+													else if (err.checkOperation(e1, e2)==-2) {
+														String message = "Error: "+e1+">"+e2+"\nNo se puede comparar booleanos\n";
+														mensajeError.add(message);
+													}
+													else {
+														 String message = "Error: "+e1+">"+e2+"\nOperandos no validos\n";
+														mensajeError.add(message);
+													}
+										        :}
 
 				| e_boolean:e1 OR  e_boolean:e2	{: RESULT = (((boolean)e1) || ((boolean)e2));        :}
-				| e_boolean:e1 AND  e_boolean:e2{: RESULT = (((boolean)e1) && ((boolean)e2));        :}
-
-							
-								
+				| e_boolean:e1 AND  e_boolean:e2{: RESULT = (((boolean)e1) && ((boolean)e2));        :}	
+				
+											
 
 				;				
 //sustitucion de uminus				      

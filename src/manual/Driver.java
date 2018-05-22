@@ -17,7 +17,15 @@ class Driver {
 		if (parser.mensajeError.isEmpty()) {
 			System.out.println("----------------------Variables declaradas----------------------\n");
 			for (i=0; i<parser.variables.size(); i++) {
-				System.out.println(parser.variables.get(i).id+" 		Tipo: "+parser.variables.get(i).tipo+"	 	Valor final: "+parser.variables.get(i).valor);
+				if (parser.variables.get(i).tipo.equals("VECTOR_REAL")||parser.variables.get(i).tipo.equals("VECTOR_ENTERO")||
+					parser.variables.get(i).tipo.equals("VECTOR_BOOLEANO")||parser.variables.get(i).tipo.equals("VECTOR_CARACTER")) {
+					System.out.print(parser.variables.get(i).id+" 		Tipo: "+parser.variables.get(i).tipo+"	 	Valores finales: ");
+					for (int j = 0; j<parser.variables.get(i).vector.length; j++) {
+						System.out.print(parser.variables.get(i).vector[j]+", ");
+					}
+					System.out.println();
+				}
+				else System.out.println(parser.variables.get(i).id+" 		Tipo: "+parser.variables.get(i).tipo+"	 	Valor final: "+parser.variables.get(i).valor);
 			}
 		}
 		else {
