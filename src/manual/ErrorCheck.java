@@ -3,7 +3,6 @@ package manual;
 public class ErrorCheck {
 	
 	public boolean asignacion_check (String k, String e1, Object e2, String type) {
-		System.out.println(String.valueOf(e2));
 		if(String.valueOf(e2).equals("null")) return false;
 		if (k.equals("REAL") && !e2.getClass().getSimpleName().equals("Boolean"))
 				return true;
@@ -14,7 +13,7 @@ public class ErrorCheck {
 		else if (k.equals("ENTERO")&& (e2.getClass().getSimpleName().equals("Integer")||e2.getClass().getSimpleName().equals("Character")))
 				return true;
 		
-		else if (k.equals("CARACTER")&& e2.getClass().getSimpleName().equals("Character")) 
+		else if (k.equals("CARACTER")&& (e2.getClass().getSimpleName().equals("Character")||e2.getClass().getSimpleName().equals("Integer"))) 
 			return true;
 		
 		

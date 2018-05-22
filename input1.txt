@@ -1,5 +1,11 @@
 REAL re2;
-re2 = true*3;
+re2 = 4*3;
+BOOLEANO bo = true;
+SI true ENTONCES %% a es el máximo
+bo = false;
+FINSI
+ENTERO r3 = -((+5+2-1))+5+true;
+
 
 
 
