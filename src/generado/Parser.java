@@ -528,7 +528,7 @@ public class Parser extends java_cup.runtime.lr_parser {
 
   ComplexSymbolFactory f = new ComplexSymbolFactory();
   symbolFactory = f;
-  File file = new File("input1.txt");
+  File file = new File("input2.txt");
   FileInputStream fis = null;
   br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 
@@ -558,6 +558,7 @@ public class Parser extends java_cup.runtime.lr_parser {
   protected Lexer lexer;
   public ArrayList<Variable> variables = new ArrayList<>(); 
   ArrayList<Integer> temp = new ArrayList<>();	
+  String idTemp = null;
   public ArrayList<String> mensajeError = new ArrayList<>();
   public ArrayList<String> salidaParser = new ArrayList<>();
   ErrorCheck err = new ErrorCheck();
@@ -781,7 +782,6 @@ class CUP$Parser$actions {
 															if(variable.id.equals(String.valueOf(e1))){
 																declarada = true;
 																boolean error = false;
-	
 																if(variable.dimension.length != temp.size()){
 																	String message = "Error: "+e1+" = "+e2+"\nNo coinciden las dimensiones del vector \n";
 																	mensajeError.add(message);	
@@ -797,7 +797,10 @@ class CUP$Parser$actions {
 																		}
 																	}
 																}
+																
+
 																int pos = temp.get(0) - 1;
+
 																if(!error){
 																
 																	for(int i = 1 ; i < variable.dimension.length; i++) {
@@ -826,13 +829,13 @@ class CUP$Parser$actions {
 																	
 																}
 																
-																temp.clear();
+																
 															}
 														}
 														if (!declarada) {
 														String message = "Error: "+e1+" = "+e2+"\nLa variable '"+e1+"' no esta declarada\n";
 														mensajeError.add(message);
-													 }
+													 }temp.clear();
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("asignacion",7, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-3)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;
@@ -872,8 +875,9 @@ class CUP$Parser$actions {
 		Object e = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-1)).value;
 		//@@CUPDBG8
  if (String.valueOf(e).equals("null")||!e.getClass().getSimpleName().equals("Integer")) {
-													   	String message = "Error: ["+e+"]\n"+e+"La posicion de un vector tiene que ser un entero\n";
-													   	mensajeError.add(message); }
+													   	String message = "Error: ["+e+"]\nLa posicion de un vector tiene que ser un entero\n";
+													   	mensajeError.add(message); 
+														RESULT = -1;}
 													   else if (e.getClass().getSimpleName().equals("Integer")) temp.add(TypeConvert.toInteger(e));
 													   
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("v_exp_list",0, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-2)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
@@ -889,8 +893,9 @@ class CUP$Parser$actions {
 		Object e = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-1)).value;
 		//@@CUPDBG9
  if (String.valueOf(e).equals("null")||!e.getClass().getSimpleName().equals("Integer")) {
-													   	String message = "Error: ["+e+"]\n"+e+"La posicion de un vector tiene que ser un entero\n";
-													   	mensajeError.add(message); }
+													   	String message = "Error: ["+e+"]\nLa posicion de un vector tiene que ser un entero\n";
+													   	mensajeError.add(message);
+														RESULT = -1; }
 														else if (e.getClass().getSimpleName().equals("Integer")) temp.add(TypeConvert.toInteger(e));
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("v_exp_list",0, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-3)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
@@ -938,7 +943,7 @@ class CUP$Parser$actions {
 		Location exright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.elementAt(CUP$Parser$top-2)).xright;
 		Object e = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-2)).value;
 		//@@CUPDBG12
- if (!e.getClass().getSimpleName().equals("Boolean")) {
+ if (String.valueOf(e).equals("null") ||!e.getClass().getSimpleName().equals("Boolean")) {
 																	String message = "Error: MIENTRAS "+e+"\n'"+e+"' debe ser una expresion booleana\n";
 																	mensajeError.add(message);
 																}
@@ -1095,14 +1100,16 @@ String message = "Declarado: "+e1;
 		Location e2xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		Object e2 = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
 		//@@CUPDBG21
-	int longitud = 1;
+	if(!String.valueOf(e2).equals("-1")){	
+														int longitud = 1;
 														for (Integer in : temp) longitud = longitud * in;
 														if(String.valueOf(k).toUpperCase().equals("ENTERO"))variables.add(new Variable("VECTOR_ENTERO",String.valueOf(e1),new Integer[longitud], (Integer[])temp.toArray(new Integer[0])));
 														else if(String.valueOf(k).toUpperCase().equals("REAL"))variables.add(new Variable("VECTOR_REAL",String.valueOf(e1),new Float[longitud], (Integer[])temp.toArray(new Integer[0])));
 														else if(String.valueOf(k).toUpperCase().equals("BOOLEANO"))variables.add(new Variable("VECTOR_BOOLEANO",String.valueOf(e1),new Boolean[longitud], (Integer[])temp.toArray(new Integer[0])));
 														else if(String.valueOf(k).toUpperCase().equals("CARACTER"))variables.add(new Variable("VECTOR_CARACTER",String.valueOf(e1),new Character[longitud], (Integer[])temp.toArray(new Integer[0])));													
-														
+														}
 														temp.clear();
+													
 													
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("decl_vector",12, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-3)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
@@ -1411,14 +1418,15 @@ String message = "Declarado: "+e1;
 		//@@CUPDBG39
  for (Variable variable : variables) {
 															if(variable.id.equals(String.valueOf(e1))) {
-																if (variable.tipo.equals("REAL")) RESULT = TypeConvert.toReal(variable.valor);
-																else if (variable.tipo.equals("ENTERO")) RESULT = TypeConvert.toInteger(variable.valor);
-																else if (variable.tipo.equals("BOOLEANO")) RESULT = variable.valor;
-																/*else {
-																 String message = "Error: "+e1+" No se pueden hacer operaciones con booleano\n";
-																 //report_error(message, null);
-																mensajeError.add(message);
-																}*/
+																if (!String.valueOf(variable.valor).equals("null")){
+																	if (variable.tipo.equals("REAL")) RESULT = TypeConvert.toReal(variable.valor);
+																	else if (variable.tipo.equals("ENTERO")||variable.tipo.equals("CARACTER")) RESULT = TypeConvert.toInteger(variable.valor);
+																	else if (variable.tipo.equals("BOOLEANO")) RESULT = variable.valor;}
+																else {
+																		String message = "Error: "+e1+"\nLa variable '"+e1+"' no esta inicializada\n";
+																		mensajeError.add(message);
+																}
+																
 															}
 														}       
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("f_float",26, ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
@@ -1434,40 +1442,46 @@ String message = "Declarado: "+e1;
 		Object e1 = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-1)).value;
 		//@@CUPDBG40
   
-														for (Variable variable : variables) {
-															if(variable.id.equals(String.valueOf(e1))){
-																boolean error = false;
-	
-																if(variable.dimension.length != temp.size()){
-																	String message = "Error: "+e1+"\nNo coinciden las dimensiones del vector \n";
-																	mensajeError.add(message);	
-																	error = true;
-																}
-																else{
-																	for(int i = 0 ; i < temp.size(); i++) {
-																		if(variable.dimension[i]<temp.get(i)){
-																			String message = "Error: "+e1+"\nLlamada a vector fuera de los límites \n";
-																			mensajeError.add(message);
-																			error = true;
-																			break; 
+																	for (Variable variable : variables) {
+																		if(variable.id.equals(String.valueOf(e1))){
+																			//if (!String.valueOf(variable.valor).equals("null")){
+																				boolean error = false;
+
+																				if(variable.dimension.length != temp.size()){
+																					String message = "Error: "+e1+"\nNo coinciden las dimensiones del vector \n";
+																					mensajeError.add(message);	
+																					error = true;
+																				}
+																				else{
+																					for(int i = 0 ; i < temp.size(); i++) {
+																						if(variable.dimension[i]<temp.get(i)){
+																							String message = "Error: "+e1+"\nLlamada a vector fuera de los límites \n";
+																							mensajeError.add(message);
+																							error = true;
+																							break; 
+																						}
+																					}
+																				}
+																				int pos = temp.get(0) - 1;
+																				if(!error){
+							
+																					for(int i = 1 ; i < variable.dimension.length; i++) {
+																						int ponderacion = 1;
+																						for(int j = 0; j < i ; j++) ponderacion = ponderacion * variable.dimension[j];
+																							pos = pos + ponderacion * (temp.get(i)-1); 
+																						}
+																				}
+																				if (variable.tipo.equals("VECTOR_REAL")) RESULT = TypeConvert.toReal(variable.vector[pos]);
+																				else if (variable.tipo.equals("VECTOR_ENTERO") || variable.tipo.equals("VECTOR_CARACTER")) RESULT = TypeConvert.toInteger(variable.vector[pos]);
+																				else if (variable.tipo.equals("VECTOR_BOOLEANO")) RESULT = variable.vector[pos];
+																				
+																				//}
+																			/*else {
+																				String message = "Error: "+e1+"\nLa variable '"+e1+"' no esta inicializada\n";
+																				mensajeError.add(message);
+																			}*/
 																		}
-																	}
-																}
-																int pos = temp.get(0) - 1;
-																if(!error){
-																
-																	for(int i = 1 ; i < variable.dimension.length; i++) {
-																		int ponderacion = 1;
-																			for(int j = 0; j < i ; j++) ponderacion = ponderacion * variable.dimension[j];
-																				pos = pos + ponderacion * (temp.get(i)-1); 
-																	}
-																}
-																if (variable.tipo.equals("VECTOR_REAL")) RESULT = TypeConvert.toReal(variable.vector[pos]);
-																else if (variable.tipo.equals("VECTOR_ENTERO") || variable.tipo.equals("VECTOR_CARACTER")) RESULT = TypeConvert.toInteger(variable.vector[pos]);
-																else if (variable.tipo.equals("VECTOR_BOOLEANO")) RESULT = variable.vector[pos];
-															    temp.clear();
-															}
-														}
+																	}temp.clear();
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("f_float",26, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;
@@ -1687,7 +1701,7 @@ String message = "Declarado: "+e1;
 		Location e2xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		Boolean e2 = (Boolean)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
 		//@@CUPDBG50
- RESULT = (((boolean)e1) || ((boolean)e2));        
+ if (!String.valueOf(e1).equals("null")&&!String.valueOf(e2).equals("null")) RESULT = (((boolean)e1) || ((boolean)e2)); 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("e_boolean",29, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-2)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;
@@ -1703,7 +1717,7 @@ String message = "Declarado: "+e1;
 		Location e2xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		Boolean e2 = (Boolean)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
 		//@@CUPDBG51
- RESULT = (((boolean)e1) && ((boolean)e2));        
+ if (!String.valueOf(e1).equals("null")&&!String.valueOf(e2).equals("null"))  RESULT = (((boolean)e1) && ((boolean)e2)); 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("e_boolean",29, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-2)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;

@@ -1,35 +1,34 @@
-%% Programa de ejemplo %%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%% Definicion de Funcion
-FUNCION cuadrado( REAL a ) -> REAL
-{
-a * a;
-}
-%%%%%% Sobrecarga de funciones
-FUNCION cuadrado( ENTERO e ) -> ENTERO
-{
-e * e;
-}
-%%%%%% Funcion de dos argumentos
-FUNCION potencia( REAl a, ENTERO e ) -> REAL
-{
-REAL r=1;
-ENTERO i=1;
-MIENTRAS i<e
-R <- r*a;
-I <- i+1;
+%%Programa con errores
+
+%%%%%% Declaracion de variables  
+REAL re1, re2;  
+%% Asignación de valores incorreta
+re2 = true;	
+BOOLEANO bo1 <- 3+5/(3+2);
+ENTERO e1 <- 5/2;
+VECTOR REAL punto1[4.2][5][a];
+punto1[4]<-5;
+
+
+%%Operaciones con tipos incompatibles
+BOOLEANO bo2 = 5+3*(4-2) < 20; 
+re1 = 1.1+bo2-3;
+bo2 <- re1 - 5;
+
+%%Acceso a posiciones del vector incorrectas
+VECTOR ENTERO punto2[2][3];
+punto2[5][2] = 1;
+punto2[1][2][3] = 1;
+
+%%Operaciones booleanas incorrectas
+BOOLEANO b2 = true;
+SI b2==false OR b2<5 ENTONCES
+bo1 = true;
+FINSI
+
+MIENTRAS 5<=b2 AND 5+6*3==5
+punto2[1][2][3] = 1;
 FINMIENTRAS
-}
-ERO en2 <- 6; %% con asignación de valor
-%%%%%% Expresiones
-5 + 6; %% operacion
-re1 <- 3.7; %% asignación simple
-re1 <- 3.7 + cuadrado(re1); %% usando llamada a función
-re2 <- potencia(re1,en2);
-%%%%%% Sentencia condicional de control de flujo
-SI en2==3 OR bo3 AND re1 %% condición
-ENTONCES %% cuerpo cuando la condición es verdadera
-en2 <- en2+3;
-SINO %% cuerpo cuando la condición es falsa, llamada recursiva
-re1 <- cuadrado( cuadrado (en2) );
-FINSI %% fin de la sentencia
+
+
+

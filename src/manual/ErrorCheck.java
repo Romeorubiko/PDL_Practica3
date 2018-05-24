@@ -29,6 +29,7 @@ public class ErrorCheck {
 	public int checkOperation(Object e1, Object e2) {
 		if(String.valueOf(e1).equals("null")) return -1;
 		if(String.valueOf(e2).equals("null")) return -1;
+		if (e1.getClass().getSimpleName().equals("Boolean")&& e2.getClass().getSimpleName().equals("Boolean")) return 0;
 		if (e1.getClass().getSimpleName().equals("Boolean")|| e2.getClass().getSimpleName().equals("Boolean")) return -2;
 		return 0;
 	}
