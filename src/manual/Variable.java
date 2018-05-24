@@ -8,7 +8,7 @@ public class Variable {
 	public Object valor;
 	public Object[] vector;
 	public Integer[] dimension;
-
+	
 
 	@Override
 	public String toString() {

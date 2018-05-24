@@ -780,17 +780,33 @@ class CUP$Parser$actions {
 														for (Variable variable : variables) {
 															if(variable.id.equals(String.valueOf(e1))){
 																declarada = true;
-																													
-																/*if (!temp.get(0).getClass().getSimpleName().equals("Integer")||temp.get(0) - 1<0) {
-																	String message = "Error: "+e1+" = "+e2+"\nLa posicion del vector tiene que ser un entero positivo\n";
-																	mensajeError.add(message);
-																}*/
-																int pos = temp.get(0) - 1;
-																for(int i = 1 ; i < variable.dimension.length; i++) {
-																	int ponderacion = 1;
-																	for(int j = 0; j < i ; j++) ponderacion = ponderacion * variable.dimension[j];
-																	pos = pos + ponderacion * (temp.get(i)-1); 
+																boolean error = false;
+	
+																if(variable.dimension.length != temp.size()){
+																	String message = "Error: "+e1+" = "+e2+"\nNo coinciden las dimensiones del vector \n";
+																	mensajeError.add(message);	
+																	error = true;
 																}
+																else{
+																	for(int i = 0 ; i < temp.size(); i++) {
+																		if(variable.dimension[i]<temp.get(i)){
+																			String message = "Error: "+e1+" = "+e2+"\nLlamada a vector fuera de los límites \n";
+																			mensajeError.add(message);
+																			error = true;
+																			break; 
+																		}
+																	}
+																}
+																int pos = temp.get(0) - 1;
+																if(!error){
+																
+																	for(int i = 1 ; i < variable.dimension.length; i++) {
+																		int ponderacion = 1;
+																			for(int j = 0; j < i ; j++) ponderacion = ponderacion * variable.dimension[j];
+																				pos = pos + ponderacion * (temp.get(i)-1); 
+																	}
+																}
+																
 																
 																
 																if (err.asignacion_check(variable.tipo, e2)){
@@ -1420,11 +1436,31 @@ String message = "Declarado: "+e1;
   
 														for (Variable variable : variables) {
 															if(variable.id.equals(String.valueOf(e1))){
+																boolean error = false;
+	
+																if(variable.dimension.length != temp.size()){
+																	String message = "Error: "+e1+"\nNo coinciden las dimensiones del vector \n";
+																	mensajeError.add(message);	
+																	error = true;
+																}
+																else{
+																	for(int i = 0 ; i < temp.size(); i++) {
+																		if(variable.dimension[i]<temp.get(i)){
+																			String message = "Error: "+e1+"\nLlamada a vector fuera de los límites \n";
+																			mensajeError.add(message);
+																			error = true;
+																			break; 
+																		}
+																	}
+																}
 																int pos = temp.get(0) - 1;
-																for(int i = 1 ; i < variable.dimension.length; i++) {
-																	int ponderacion = 1;
-																	for(int j = 0; j < i ; j++) ponderacion = ponderacion * variable.dimension[j];
-																	pos = pos + ponderacion * (temp.get(i)-1); 
+																if(!error){
+																
+																	for(int i = 1 ; i < variable.dimension.length; i++) {
+																		int ponderacion = 1;
+																			for(int j = 0; j < i ; j++) ponderacion = ponderacion * variable.dimension[j];
+																				pos = pos + ponderacion * (temp.get(i)-1); 
+																	}
 																}
 																if (variable.tipo.equals("VECTOR_REAL")) RESULT = TypeConvert.toReal(variable.vector[pos]);
 																else if (variable.tipo.equals("VECTOR_ENTERO") || variable.tipo.equals("VECTOR_CARACTER")) RESULT = TypeConvert.toInteger(variable.vector[pos]);
