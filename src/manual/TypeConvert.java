@@ -10,7 +10,10 @@ public class TypeConvert {
 	}
 	
 	public static Integer toInteger (Object e) {
+		if (e.getClass().getSimpleName().equals("Character")) {
 			int num_val = (int) ((char)e);
 			return Integer.parseInt(Integer.toString(num_val));
+		}
+		else return Integer.parseInt(e.toString());
 	}
 }

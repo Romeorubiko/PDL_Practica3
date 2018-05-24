@@ -1,6 +1,55 @@
-REAL r1 = '-';
-CARACTER c = 'c';
-BOOLEANO bo = 5.1;
-ENTERO ent = 6;
-r1 = r1 + 2;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  %% Programa de ejemplo %%  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+%%%%%% Declaracion de variables  
+REAL re1, re2;  
+ENTERO en2 <- 6; %% con asignación de valor  
+BOOLEANO bo3 <- false; %% se asigna el resultado de una expresión  
+CARACTER ca4 <- ‘h’; %% variable de tipo carácter, y su literal 
+VECTOR REAL punto1[4] ; %% declaración variable vector (no permite asignación al mismo tiempo que la declaracion 
+BOOLEANO b = true;
+ 
+%%%%%% Expresiones  
+5 + 6; %% operacion  
+re1 <- 3.7; %% asignación simple  
+re1 = 5;
+ 
+punto1[4] <- 5.0; %% posición 1 de variable vector
+punto1[1] <- 0.0; %% posición 1 de variable vector 
+punto1[2] <- 0.0; %% posición 2 de variable vector 
+punto1[3] <- 10.0; %% posición 3 de variable vector
+bo3 <- en2<=7 AND 5*3>20 OR en2>5;
+re2 = punto1[4] + punto1[4];
+
+%%%%%% Sentencia condicional de control de flujo  
+SI en2<=3  %% condición 
+ENTONCES %% cuerpo cuando la condición es verdadera      
+en2 <- en2+3;  
+SINO %% cuerpo cuando la condición es falsa      
+
+re1 <- 10-en2*en2;  FINSI %% fin de la sentencia  
+
+BOOLEANO seguir <- true; 
+
+
+punto1[1] = 2.0;
+
+
+SI punto1[1] <5 ENTONCES%% cuerpo si condición verdadera
+
+seguir <- false;  
+
+SINO %% cuerpo cuando la condición es falsa
+
+seguir <- true; 
+
+FINSI %% fin de condicional 
+
+ 
+
+
+
+
+
+
+
+
 
