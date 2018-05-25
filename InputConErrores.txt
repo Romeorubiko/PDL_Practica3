@@ -2,11 +2,11 @@
 
 %%%%%% Declaracion de variables  
 REAL re1, re2;  
+VECTOR REAL punto1[-2][5.5]['a'];						%% dimensiones incorrectas del vector						
+Entero re2;											%%Variable ya declarada
 
-Entero re1;											%%Variable ya declarada
 %% Asignación de valores incorreta
 re2 = true;											%% boolean a real
-
 BOOLEANO bo1 <- 3+5/(3+4);							%% real a boolean
 bo = 'h';											%% caracter a boolean
 bo = 5+3;											%% entero a boolean
@@ -15,8 +15,26 @@ ENTERO e1 <- 5/2;									%% real a entero
 CARACTER c = 5.5;									%% real a caracter
 CARACTER c = 4;										%% entero a caracter
 
+%%Asignacion de valores incorrecta en vectores
+VECTOR REAL p1[1];
+p1[1] = true;										%% booleano a real
 
-VECTOR REAL punto1[4.2][5][a];						%% dimensiones incorrectas del vector
+VECTOR ENTERO p2[1];
+p2[1] = 5.5;										%% real a entero
+p2[1] = false;										%% booleano a entero
+
+VECTOR CARACTER p3[1];
+p3[1] = 5.1;										%% real a caracter
+p3[1] = false;										%% booleano a caracter
+p3[1] = 5;											%% entero a caracter
+
+VECTOR BOOLEANO p4[1];
+p4[1] = 5.5;										%% real a booleano
+p4[1] = 5;											%% entero a booleano
+p4[1] = 'c';										%% caracter a booleano
+
+
+re3 = 5*86;											%% asignacion a una variable no declarada
 punto1[4]<-5;										%% asignacion a un vector no inicializado
 
 
@@ -24,12 +42,11 @@ punto1[4]<-5;										%% asignacion a un vector no inicializado
 BOOLEANO bo2 = true; 
 re1 = 1.1+bo2-3;									%% Operaciones con booleano
 bo2 <- re1;											%% re1 no es una variable
-bo2 <- 5+3-8*6; 									%% Asignacion no entero a booleano
+bo2 <- 5+3-8*6; 									%% Guardar operaciones en un booleano
 
 
 %%Acceso a posiciones del vector incorrectas
 VECTOR ENTERO punto2[2][3];
-punto2[1][1] = 2;
 punto2[5][2] = 3;									%% Acceso a posiciones fuera de limites
 punto2[1][2][3] = 4;								%% Dimesiones incorrectas 
 

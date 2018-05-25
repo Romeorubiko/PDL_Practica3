@@ -27,15 +27,17 @@ parser code {:
 
 :}
 
-/* define how to connect to the scanner! */
+
 init with {:
-  ComplexSymbolFactory f = new ComplexSymbolFactory();
+
+/*------Cambiar el fichero de entrada-------*/
+  File file = new File("InputSinErrores.txt");
+//File file = new File("InputConErrores.txt");
+  
+
+ComplexSymbolFactory f = new ComplexSymbolFactory();
   symbolFactory = f;
-  File file = new File("input2.txt");
   FileInputStream fis = null;
-
-
-
 
   try {
     fis = new FileInputStream(file);
@@ -193,15 +195,15 @@ expresion	::= e_float:e 							{: RESULT = e;:}
 			| e_boolean:e 							{: RESULT = e;:}
 			;
 			
-v_exp_list  ::= LBRACK e_float:e RBRACK				{: if (String.valueOf(e).equals("null")||!e.getClass().getSimpleName().equals("Integer")) {
-													   	String message = "\nError: ["+e+"]\nLa posicion de un vector tiene que ser un entero\n";
+v_exp_list  ::= LBRACK e_float:e RBRACK				{: if (String.valueOf(e).equals("null")||!e.getClass().getSimpleName().equals("Integer")&&!e.getClass().getSimpleName().equals("Character")) {
+													   	String message = "\nError: ["+e+"]\nLa longitud del vector tiene que ser un entero\n";
 													   	mensajeError.add(message); 
 														RESULT = -1;}
 													   else if (e.getClass().getSimpleName().equals("Integer")) temp.add(TypeConvert.toInteger(e));
 													   :}
 													   
-			| v_exp_list LBRACK e_float:e RBRACK	{: if (String.valueOf(e).equals("null")||!e.getClass().getSimpleName().equals("Integer")) {
-													   	String message = "\nError: ["+e+"]\nLa posicion de un vector tiene que ser un entero\n";
+			| v_exp_list LBRACK e_float:e RBRACK	{: if (String.valueOf(e).equals("null")||!e.getClass().getSimpleName().equals("Integer")&&!e.getClass().getSimpleName().equals("Character")) {
+													   	String message = "\nError: ["+e+"]\nLa longitud del vector tiene que ser un entero\n";
 													   	mensajeError.add(message);
 														RESULT = -1; }
 														else if (e.getClass().getSimpleName().equals("Integer")) temp.add(TypeConvert.toInteger(e));:}
@@ -293,11 +295,16 @@ keytipo		::= ENTERO								{: RESULT = "ENTERO"; :}
 decl_vector ::= VECTOR keytipo:k ID:e1 v_exp_list:e2{:	if(!String.valueOf(e2).equals("-1")){	
 														int longitud = 1;
 														for (Integer in : temp) longitud = longitud * in;
-														if(String.valueOf(k).toUpperCase().equals("ENTERO"))variables.add(new Variable("VECTOR_ENTERO",String.valueOf(e1),new Integer[longitud], (Integer[])temp.toArray(new Integer[0])));
-														else if(String.valueOf(k).toUpperCase().equals("REAL"))variables.add(new Variable("VECTOR_REAL",String.valueOf(e1),new Float[longitud], (Integer[])temp.toArray(new Integer[0])));
-														else if(String.valueOf(k).toUpperCase().equals("BOOLEANO"))variables.add(new Variable("VECTOR_BOOLEANO",String.valueOf(e1),new Boolean[longitud], (Integer[])temp.toArray(new Integer[0])));
-														else if(String.valueOf(k).toUpperCase().equals("CARACTER"))variables.add(new Variable("VECTOR_CARACTER",String.valueOf(e1),new Character[longitud], (Integer[])temp.toArray(new Integer[0])));													
+														if (longitud<1) {String message = "\nError: VECTOR "+k+" "+e1+" "+e2+"\nLa longitud del vector tiene que ser un numero positivo\n";
+															mensajeError.add(message);
+															
 														}
+														else {
+															if(String.valueOf(k).toUpperCase().equals("ENTERO"))variables.add(new Variable("VECTOR_ENTERO",String.valueOf(e1),new Integer[longitud], (Integer[])temp.toArray(new Integer[0])));
+															else if(String.valueOf(k).toUpperCase().equals("REAL"))variables.add(new Variable("VECTOR_REAL",String.valueOf(e1),new Float[longitud], (Integer[])temp.toArray(new Integer[0])));
+															else if(String.valueOf(k).toUpperCase().equals("BOOLEANO"))variables.add(new Variable("VECTOR_BOOLEANO",String.valueOf(e1),new Boolean[longitud], (Integer[])temp.toArray(new Integer[0])));
+															else if(String.valueOf(k).toUpperCase().equals("CARACTER"))variables.add(new Variable("VECTOR_CARACTER",String.valueOf(e1),new Character[longitud], (Integer[])temp.toArray(new Integer[0])));													
+														}}
 														temp.clear();
 													
 													:}
@@ -494,6 +501,7 @@ e_boolean		::=	expr_list:e1 EQEQ expr_list:e2{:
 													}
    												:}
 				| expr_list:e1 LT expr_list:e2	{: if (err.checkOperation(e1, e2)==0) {
+											
 														RESULT = ((Float.valueOf(String.valueOf(e1))) < (Float.valueOf(String.valueOf(e2))));
 													}
 													else if (err.checkOperation(e1, e2)==-2) {

@@ -526,13 +526,15 @@ public class Parser extends java_cup.runtime.lr_parser {
     {
 //@@CUPDBG1
 
-  ComplexSymbolFactory f = new ComplexSymbolFactory();
+
+/*------Cambiar el fichero de entrada-------*/
+  File file = new File("InputSinErrores.txt");
+//File file = new File("InputConErrores.txt");
+  
+
+ComplexSymbolFactory f = new ComplexSymbolFactory();
   symbolFactory = f;
-  File file = new File("input2.txt");
   FileInputStream fis = null;
-
-
-
 
   try {
     fis = new FileInputStream(file);
@@ -864,8 +866,8 @@ class CUP$Parser$actions {
 		Location exright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)).xright;
 		Object e = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-1)).value;
 		//@@CUPDBG7
- if (String.valueOf(e).equals("null")||!e.getClass().getSimpleName().equals("Integer")) {
-													   	String message = "\nError: ["+e+"]\nLa posicion de un vector tiene que ser un entero\n";
+ if (String.valueOf(e).equals("null")||!e.getClass().getSimpleName().equals("Integer")&&!e.getClass().getSimpleName().equals("Character")) {
+													   	String message = "\nError: ["+e+"]\nLa longitud del vector tiene que ser un entero\n";
 													   	mensajeError.add(message); 
 														RESULT = -1;}
 													   else if (e.getClass().getSimpleName().equals("Integer")) temp.add(TypeConvert.toInteger(e));
@@ -882,8 +884,8 @@ class CUP$Parser$actions {
 		Location exright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)).xright;
 		Object e = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-1)).value;
 		//@@CUPDBG8
- if (String.valueOf(e).equals("null")||!e.getClass().getSimpleName().equals("Integer")) {
-													   	String message = "\nError: ["+e+"]\nLa posicion de un vector tiene que ser un entero\n";
+ if (String.valueOf(e).equals("null")||!e.getClass().getSimpleName().equals("Integer")&&!e.getClass().getSimpleName().equals("Character")) {
+													   	String message = "\nError: ["+e+"]\nLa longitud del vector tiene que ser un entero\n";
 													   	mensajeError.add(message);
 														RESULT = -1; }
 														else if (e.getClass().getSimpleName().equals("Integer")) temp.add(TypeConvert.toInteger(e));
@@ -1116,11 +1118,16 @@ declarada = false;
 	if(!String.valueOf(e2).equals("-1")){	
 														int longitud = 1;
 														for (Integer in : temp) longitud = longitud * in;
-														if(String.valueOf(k).toUpperCase().equals("ENTERO"))variables.add(new Variable("VECTOR_ENTERO",String.valueOf(e1),new Integer[longitud], (Integer[])temp.toArray(new Integer[0])));
-														else if(String.valueOf(k).toUpperCase().equals("REAL"))variables.add(new Variable("VECTOR_REAL",String.valueOf(e1),new Float[longitud], (Integer[])temp.toArray(new Integer[0])));
-														else if(String.valueOf(k).toUpperCase().equals("BOOLEANO"))variables.add(new Variable("VECTOR_BOOLEANO",String.valueOf(e1),new Boolean[longitud], (Integer[])temp.toArray(new Integer[0])));
-														else if(String.valueOf(k).toUpperCase().equals("CARACTER"))variables.add(new Variable("VECTOR_CARACTER",String.valueOf(e1),new Character[longitud], (Integer[])temp.toArray(new Integer[0])));													
+														if (longitud<1) {String message = "\nError: VECTOR "+k+" "+e1+" "+e2+"\nLa longitud del vector tiene que ser un numero positivo\n";
+															mensajeError.add(message);
+															
 														}
+														else {
+															if(String.valueOf(k).toUpperCase().equals("ENTERO"))variables.add(new Variable("VECTOR_ENTERO",String.valueOf(e1),new Integer[longitud], (Integer[])temp.toArray(new Integer[0])));
+															else if(String.valueOf(k).toUpperCase().equals("REAL"))variables.add(new Variable("VECTOR_REAL",String.valueOf(e1),new Float[longitud], (Integer[])temp.toArray(new Integer[0])));
+															else if(String.valueOf(k).toUpperCase().equals("BOOLEANO"))variables.add(new Variable("VECTOR_BOOLEANO",String.valueOf(e1),new Boolean[longitud], (Integer[])temp.toArray(new Integer[0])));
+															else if(String.valueOf(k).toUpperCase().equals("CARACTER"))variables.add(new Variable("VECTOR_CARACTER",String.valueOf(e1),new Character[longitud], (Integer[])temp.toArray(new Integer[0])));													
+														}}
 														temp.clear();
 													
 													
@@ -1648,6 +1655,7 @@ declarada = false;
 		Object e2 = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
 		//@@CUPDBG47
  if (err.checkOperation(e1, e2)==0) {
+											
 														RESULT = ((Float.valueOf(String.valueOf(e1))) < (Float.valueOf(String.valueOf(e2))));
 													}
 													else if (err.checkOperation(e1, e2)==-2) {
