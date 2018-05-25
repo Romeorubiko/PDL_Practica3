@@ -13,7 +13,7 @@ public class ErrorCheck {
 		else if ((k.equals("ENTERO")||k.equals("VECTOR_ENTERO"))&& (e2.getClass().getSimpleName().equals("Integer")||e2.getClass().getSimpleName().equals("Character")))
 				return true;
 		
-		else if ((k.equals("CARACTER")||k.equals("VECTOR_CARACTER"))&& (e2.getClass().getSimpleName().equals("Character")||e2.getClass().getSimpleName().equals("Integer"))) 
+		else if ((k.equals("CARACTER")||k.equals("VECTOR_CARACTER"))&& (e2.getClass().getSimpleName().equals("Character"))) 
 			return true;
 	
 		

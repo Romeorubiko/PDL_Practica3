@@ -530,7 +530,7 @@ public class Parser extends java_cup.runtime.lr_parser {
   symbolFactory = f;
   File file = new File("input2.txt");
   FileInputStream fis = null;
-  br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+
 
 
 
@@ -557,13 +557,10 @@ public class Parser extends java_cup.runtime.lr_parser {
 
   protected Lexer lexer;
   public ArrayList<Variable> variables = new ArrayList<>(); 
-  ArrayList<Integer> temp = new ArrayList<>();	
-  String idTemp = null;
+  ArrayList<Integer> temp = new ArrayList<>();
   public ArrayList<String> mensajeError = new ArrayList<>();
   public ArrayList<String> salidaParser = new ArrayList<>();
   ErrorCheck err = new ErrorCheck();
-  String lectura;
-  BufferedReader br; 
   Boolean declarada;
 
 
@@ -691,11 +688,7 @@ class CUP$Parser$actions {
           case 10: // sent_uso ::= error SEMI 
             {
               Object RESULT =null;
-		Location e1xleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xleft;
-		Location e1xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
-		Object e1 = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		//@@CUPDBG3
- RESULT = e1;
+
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("sent_uso",4, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;
@@ -728,7 +721,7 @@ class CUP$Parser$actions {
 		Location e2xleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xleft;
 		Location e2xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		Object e2 = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		//@@CUPDBG4
+		//@@CUPDBG3
 	declarada = false;
 														for (Variable variable : variables) {
 															if(variable.id.equals(String.valueOf(e1))) {
@@ -742,12 +735,12 @@ class CUP$Parser$actions {
 																}
 																else {
 																	if (!String.valueOf(e2).equals("null")){																		
-																		String message = "Error: "+e1+" = "+e2+"\nNo se puede asignar una variable de tipo "+e2.getClass().getSimpleName()+" a un " +variable.tipo+"\n";
+																		String message = "\nError: "+e1+" = "+e2+"\nNo se puede asignar una variable de tipo "+e2.getClass().getSimpleName()+" a un " +variable.tipo+"\n";
 																		mensajeError.add(message);
 																	}
 																	else {
 																			
-																		String message = "Error: "+e1+" = "+String.valueOf(e2)+"\nFallo de asignacion \n";
+																		String message = "\nError: "+e1+" = "+String.valueOf(e2)+"\nFallo de asignacion \n";
 																		mensajeError.add(message);
 																	}
 																	
@@ -756,7 +749,7 @@ class CUP$Parser$actions {
 															}
 														}
 													if (!declarada) {
-														String message = "Error: "+e1+" = "+e2+"\nLa variable '"+e1+"' no esta declarada\n";
+														String message = "\nError: "+e1+" = "+e2+"\nLa variable '"+e1+"' no esta declarada\n";
 														mensajeError.add(message);
 													 }
 													
@@ -774,23 +767,21 @@ class CUP$Parser$actions {
 		Location e2xleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xleft;
 		Location e2xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		Object e2 = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		//@@CUPDBG5
+		//@@CUPDBG4
   declarada = false;
-												
-												
 														for (Variable variable : variables) {
 															if(variable.id.equals(String.valueOf(e1))){
 																declarada = true;
 																boolean error = false;
 																if(variable.dimension.length != temp.size()){
-																	String message = "Error: "+e1+" = "+e2+"\nNo coinciden las dimensiones del vector \n";
+																	String message = "\nError: "+e1+" = "+e2+"\nNo coinciden las dimensiones del vector \n";
 																	mensajeError.add(message);	
 																	error = true;
 																}
 																else{
 																	for(int i = 0 ; i < temp.size(); i++) {
 																		if(variable.dimension[i]<temp.get(i)){
-																			String message = "Error: "+e1+" = "+e2+"\nLlamada a vector fuera de los límites \n";
+																			String message = "\nError: "+e1+" = "+e2+"\nLlamada a vector fuera de los límites \n";
 																			mensajeError.add(message);
 																			error = true;
 																			break; 
@@ -798,7 +789,6 @@ class CUP$Parser$actions {
 																	}
 																}
 																
-
 																int pos = temp.get(0) - 1;
 
 																if(!error){
@@ -810,8 +800,7 @@ class CUP$Parser$actions {
 																	}
 																}
 																
-																
-																
+																															
 																if (err.asignacion_check(variable.tipo, e2)){
 																	if (variable.tipo.equals("VECTOR_REAL")) variable.vector[pos] = TypeConvert.toReal(e2);
 																	else if (variable.tipo.equals("VECTOR_ENTERO")) variable.vector[pos] = TypeConvert.toInteger(e2);
@@ -819,11 +808,11 @@ class CUP$Parser$actions {
 																}
 																else {
 																	if (!String.valueOf(e2).equals("null")){																		
-																		String message = "Error: "+e1+" = "+e2+"\nNo se puede asignar una variable de tipo "+e2.getClass().getSimpleName()+" a un " +variable.tipo+"\n";
+																		String message = "\nError: "+e1+" = "+e2+"\nNo se puede asignar una variable de tipo "+e2.getClass().getSimpleName()+" a un " +variable.tipo+"\n";
 																		mensajeError.add(message);
 																	}
 																	else {
-																		String message = "Error: "+e1+" = "+String.valueOf(e2)+"\nFallo de asignacion \n";
+																		String message = "\nError: "+e1+" = "+String.valueOf(e2)+"\nFallo de asignacion \n";
 																		mensajeError.add(message);
 																	}
 																	
@@ -833,9 +822,10 @@ class CUP$Parser$actions {
 															}
 														}
 														if (!declarada) {
-														String message = "Error: "+e1+" = "+e2+"\nLa variable '"+e1+"' no esta declarada\n";
+														String message = "\nError: "+e1+" = "+e2+"\nLa variable '"+e1+"' no esta declarada\n";
 														mensajeError.add(message);
-													 }temp.clear();
+													 }
+														temp.clear(); 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("asignacion",7, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-3)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;
@@ -847,7 +837,7 @@ class CUP$Parser$actions {
 		Location exleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xleft;
 		Location exright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		Object e = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		//@@CUPDBG6
+		//@@CUPDBG5
  RESULT = e;
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("expresion",28, ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
@@ -860,7 +850,7 @@ class CUP$Parser$actions {
 		Location exleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xleft;
 		Location exright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		Boolean e = (Boolean)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		//@@CUPDBG7
+		//@@CUPDBG6
  RESULT = e;
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("expresion",28, ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
@@ -873,9 +863,9 @@ class CUP$Parser$actions {
 		Location exleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)).xleft;
 		Location exright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)).xright;
 		Object e = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-1)).value;
-		//@@CUPDBG8
+		//@@CUPDBG7
  if (String.valueOf(e).equals("null")||!e.getClass().getSimpleName().equals("Integer")) {
-													   	String message = "Error: ["+e+"]\nLa posicion de un vector tiene que ser un entero\n";
+													   	String message = "\nError: ["+e+"]\nLa posicion de un vector tiene que ser un entero\n";
 													   	mensajeError.add(message); 
 														RESULT = -1;}
 													   else if (e.getClass().getSimpleName().equals("Integer")) temp.add(TypeConvert.toInteger(e));
@@ -891,9 +881,9 @@ class CUP$Parser$actions {
 		Location exleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)).xleft;
 		Location exright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)).xright;
 		Object e = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-1)).value;
-		//@@CUPDBG9
+		//@@CUPDBG8
  if (String.valueOf(e).equals("null")||!e.getClass().getSimpleName().equals("Integer")) {
-													   	String message = "Error: ["+e+"]\nLa posicion de un vector tiene que ser un entero\n";
+													   	String message = "\nError: ["+e+"]\nLa posicion de un vector tiene que ser un entero\n";
 													   	mensajeError.add(message);
 														RESULT = -1; }
 														else if (e.getClass().getSimpleName().equals("Integer")) temp.add(TypeConvert.toInteger(e));
@@ -908,9 +898,9 @@ class CUP$Parser$actions {
 		Location exleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.elementAt(CUP$Parser$top-3)).xleft;
 		Location exright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.elementAt(CUP$Parser$top-3)).xright;
 		Object e = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-3)).value;
-		//@@CUPDBG10
+		//@@CUPDBG9
  if (String.valueOf(e).equals("null") || !e.getClass().getSimpleName().equals("Boolean")) {
-																	String message = "Error: SI "+e+" ENTONCES\n'"+e+"' debe ser una expresion booleana\n";
+																	String message = "\nError: SI "+e+" ENTONCES\n'"+e+"' debe ser una expresion booleana\n";
 																	mensajeError.add(message);
 																}
 															  
@@ -925,9 +915,9 @@ class CUP$Parser$actions {
 		Location exleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.elementAt(CUP$Parser$top-5)).xleft;
 		Location exright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.elementAt(CUP$Parser$top-5)).xright;
 		Object e = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-5)).value;
-		//@@CUPDBG11
+		//@@CUPDBG10
  if (String.valueOf(e).equals("null") ||!e.getClass().getSimpleName().equals("Boolean")) {
-																	String message = "Error: SI "+e+" ENTONCES\n'"+e+"' debe ser una expresion booleana\n";
+																	String message = "\nError: SI "+e+" ENTONCES\n'"+e+"' debe ser una expresion booleana\n";
 																	mensajeError.add(message);
 																}
 															  
@@ -942,9 +932,9 @@ class CUP$Parser$actions {
 		Location exleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.elementAt(CUP$Parser$top-2)).xleft;
 		Location exright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.elementAt(CUP$Parser$top-2)).xright;
 		Object e = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-2)).value;
-		//@@CUPDBG12
+		//@@CUPDBG11
  if (String.valueOf(e).equals("null") ||!e.getClass().getSimpleName().equals("Boolean")) {
-																	String message = "Error: MIENTRAS "+e+"\n'"+e+"' debe ser una expresion booleana\n";
+																	String message = "\nError: MIENTRAS "+e+"\n'"+e+"' debe ser una expresion booleana\n";
 																	mensajeError.add(message);
 																}
 															  
@@ -965,26 +955,36 @@ class CUP$Parser$actions {
 		Location e2xleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xleft;
 		Location e2xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		Object e2 = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		//@@CUPDBG13
-	if (err.asignacion_check(String.valueOf(k),e2)) {
-														String message = e1+" = "+e2; 
-														salidaParser.add(message);
-														if (k.equals("REAL")) variables.add(new Variable(String.valueOf(k),String.valueOf(e1), TypeConvert.toReal(e2))); 
-														else if (k.equals("ENTERO")) variables.add(new Variable(String.valueOf(k),String.valueOf(e1), TypeConvert.toInteger(e2))); 	
-														else variables.add(new Variable(String.valueOf(k),String.valueOf(e1), e2)); 						
-													}
+		//@@CUPDBG12
+ declarada = false;
+												    
+													for (Variable variable : variables) {
+															if (variable.id.equals(String.valueOf(e1))) {
+																declarada = true;
+																String message = "\nError: "+k+" "+e1+" = "+String.valueOf(e2)+"\nLa variable ya esta declarada\n";
+																mensajeError.add(message);
+															}
+														}
+													if (!declarada) {
+														if (err.asignacion_check(String.valueOf(k),e2)) {
+															String message = e1+" = "+e2; 
+															salidaParser.add(message);
+															if (k.equals("REAL")) variables.add(new Variable(String.valueOf(k),String.valueOf(e1), TypeConvert.toReal(e2))); 
+															else if (k.equals("ENTERO")) variables.add(new Variable(String.valueOf(k),String.valueOf(e1), TypeConvert.toInteger(e2))); 	
+															else variables.add(new Variable(String.valueOf(k),String.valueOf(e1), e2)); 						
+														}
 													else {
 														if (!String.valueOf(e2).equals("null")){
-															String message = "Error: "+k+" "+e1+" = "+e2+"\nNo se puede asignar una variable de tipo "+e2.getClass().getSimpleName()+" a un " +k+"\n";
+															String message = "\nError: "+k+" "+e1+" = "+e2+"\nNo se puede asignar una variable de tipo "+e2.getClass().getSimpleName()+" a un " +k+"\n";
 															mensajeError.add(message);
 															
 														}
 														else {
-															String message = "Error: "+k+" "+e1+" = "+String.valueOf(e2)+"\nFallo de asignacion \n";
+															String message = "\nError: "+k+" "+e1+" = "+String.valueOf(e2)+"\nFallo de asignacion \n";
 															//report_error(message, null);
 															mensajeError.add(message);
 														}
-													}
+													}}
 													
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("decl_variable",6, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-3)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
@@ -1000,7 +1000,7 @@ class CUP$Parser$actions {
 		Location e1xleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xleft;
 		Location e1xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		Object e1 = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		//@@CUPDBG14
+		//@@CUPDBG13
  for (Variable variable : variables) {
 															if(variable.tipo.equals(String.valueOf('c')))
 																variable.tipo = String.valueOf(k);
@@ -1017,10 +1017,16 @@ class CUP$Parser$actions {
 		Location e1xleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xleft;
 		Location e1xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		Object e1 = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		//@@CUPDBG15
-String message = "Declarado: "+e1;
-													  salidaParser.add(message);
-													  variables.add(new Variable(String.valueOf('c'),String.valueOf(e1),null));
+		//@@CUPDBG14
+declarada = false;
+													  for (Variable variable : variables) {
+															if (variable.id.equals(String.valueOf(e1))) {
+																declarada = true;
+																String message = "\nError: "+e1+"\nLa variable '"+e1+"' ya esta declarada\n";
+																mensajeError.add(message);
+															}
+														}
+													  if (!declarada) variables.add(new Variable(String.valueOf('c'),String.valueOf(e1),null));
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("more_v",19, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-2)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;
@@ -1032,9 +1038,16 @@ String message = "Declarado: "+e1;
 		Location e1xleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xleft;
 		Location e1xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		Object e1 = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		//@@CUPDBG16
-String message = "Declarado: "+e1;
-													  salidaParser.add(message);
+		//@@CUPDBG15
+declarada = false;
+													  for (Variable variable : variables) {
+															if (variable.id.equals(String.valueOf(e1))) {
+																declarada = true;
+																String message = "\nError: "+e1+"\nLa variable '"+e1+"' ya esta declarada\n";
+																mensajeError.add(message);
+															}
+														}
+													  if (!declarada)	
 													  variables.add(new Variable(String.valueOf('c'),String.valueOf(e1),null));
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("more_v",19, ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
@@ -1044,7 +1057,7 @@ String message = "Declarado: "+e1;
           case 26: // keytipo ::= ENTERO 
             {
               Object RESULT =null;
-		//@@CUPDBG17
+		//@@CUPDBG16
  RESULT = "ENTERO"; 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("keytipo",18, ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
@@ -1054,7 +1067,7 @@ String message = "Declarado: "+e1;
           case 27: // keytipo ::= REAL 
             {
               Object RESULT =null;
-		//@@CUPDBG18
+		//@@CUPDBG17
  RESULT = "REAL"; 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("keytipo",18, ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
@@ -1067,7 +1080,7 @@ String message = "Declarado: "+e1;
 		Location exleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xleft;
 		Location exright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		Object e = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		//@@CUPDBG19
+		//@@CUPDBG18
  RESULT = "BOOLEANO"; 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("keytipo",18, ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
@@ -1080,7 +1093,7 @@ String message = "Declarado: "+e1;
 		Location exleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xleft;
 		Location exright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		Object e = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		//@@CUPDBG20
+		//@@CUPDBG19
  RESULT = "CARACTER"; 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("keytipo",18, ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
@@ -1099,7 +1112,7 @@ String message = "Declarado: "+e1;
 		Location e2xleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xleft;
 		Location e2xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		Object e2 = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		//@@CUPDBG21
+		//@@CUPDBG20
 	if(!String.valueOf(e2).equals("-1")){	
 														int longitud = 1;
 														for (Integer in : temp) longitud = longitud * in;
@@ -1122,7 +1135,7 @@ String message = "Declarado: "+e1;
 		Location exleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xleft;
 		Location exright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		Object e = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		//@@CUPDBG22
+		//@@CUPDBG21
  RESULT = e; 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("expr_list",1, ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
@@ -1138,21 +1151,20 @@ String message = "Declarado: "+e1;
 		Location e2xleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xleft;
 		Location e2xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		Object e2 = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		//@@CUPDBG23
+		//@@CUPDBG22
  if (err.checkOperation(e1, e2)==0) {
 												   		if (e1.getClass().getSimpleName().equals("Float")||e2.getClass().getSimpleName().equals("Float")) {
 															RESULT = TypeConvert.toReal(e1)+TypeConvert.toReal(e2);}
 														else if (e1.getClass().getSimpleName().equals("Integer")||e2.getClass().getSimpleName().equals("Integer")) RESULT = TypeConvert.toInteger(e1)+TypeConvert.toInteger(e2);
 												   }
 												   else if (err.checkOperation(e1, e2)==-2) {
-														String message = "Error: "+e1+"+"+e2+"\nNo se pueden hacer operaciones con booleano\n";
-														//String message = "Error: "+lectura+"\n No se pueden hacer operaciones con booleano\n";
+														String message = "\nError: "+e1+"+"+e2+"\nNo se pueden hacer operaciones con booleano\n";
+														
 														mensajeError.add(message);  
 	
 													}
 													else {
-														String message = "Error: "+e1+"+"+e2+"\nOperandos no validos\n";
-														//report_error(message, null); 
+														String message = "\nError: "+e1+"+"+e2+"\nOperandos no validos\n"; 
 														mensajeError.add(message); 
 														
 													}  
@@ -1171,19 +1183,17 @@ String message = "Declarado: "+e1;
 		Location e2xleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xleft;
 		Location e2xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		Object e2 = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		//@@CUPDBG24
+		//@@CUPDBG23
  if (err.checkOperation(e1, e2)==0) {
 													if (e1.getClass().getSimpleName().equals("Float")||e2.getClass().getSimpleName().equals("Float")) RESULT = TypeConvert.toReal(e1)-TypeConvert.toReal(e2);
 														else if (e1.getClass().getSimpleName().equals("Integer")||e2.getClass().getSimpleName().equals("Integer")) RESULT = TypeConvert.toInteger(e1)-TypeConvert.toInteger(e2);
 													}
 												    else if (err.checkOperation(e1, e2)==-2){
-														String message = "Error: "+e1+"-"+e2+"\nNo se pueden hacer operaciones con booleano\n";
-														//report_error(message, null);  
+														String message = "\nError: "+e1+"-"+e2+"\nNo se pueden hacer operaciones con booleano\n"; 
 														mensajeError.add(message);
 													} 
 													else {
-														String message = "Error: "+e1+"-"+e2+"\nOperandos no validos\n";
-														//report_error(message, null); 
+														String message = "\nError: "+e1+"-"+e2+"\nOperandos no validos\n";
 														mensajeError.add(message); 
 														
 													}     
@@ -1198,7 +1208,7 @@ String message = "Declarado: "+e1;
 		Location e1xleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xleft;
 		Location e1xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		Object e1 = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		//@@CUPDBG25
+		//@@CUPDBG24
  RESULT = e1;        	
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("e_float",24, ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
@@ -1214,19 +1224,17 @@ String message = "Declarado: "+e1;
 		Location e2xleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xleft;
 		Location e2xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		Object e2 = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		//@@CUPDBG26
+		//@@CUPDBG25
  if (err.checkOperation(e1, e2)==0) {
 												   if (e1.getClass().getSimpleName().equals("Float")||e2.getClass().getSimpleName().equals("Float")) RESULT = TypeConvert.toReal(e1)*TypeConvert.toReal(e2);
 													else if (e1.getClass().getSimpleName().equals("Integer")||e2.getClass().getSimpleName().equals("Integer")) RESULT = TypeConvert.toInteger(e1)*TypeConvert.toInteger(e2);
 												   }
 												   else if (err.checkOperation(e1, e2)==-2) {
-														String message = "Error: "+e1+"*"+e2+"\nNo se pueden hacer operaciones con booleano\n";
-														//report_error(message, null); 
+														String message = "\nError: "+e1+"*"+e2+"\nNo se pueden hacer operaciones con booleano\n"; 
 														mensajeError.add(message);
 													} 
 													else {
-														String message = "Error: "+e1+"*"+e2+"\nOperandos no validos\n";
-														//report_error(message, null);  
+														String message = "\nError: "+e1+"*"+e2+"\nOperandos no validos\n";  
 														mensajeError.add(message);
 														
 													}        
@@ -1244,18 +1252,16 @@ String message = "Declarado: "+e1;
 		Location e2xleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xleft;
 		Location e2xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		Object e2 = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		//@@CUPDBG27
+		//@@CUPDBG26
  if (err.checkOperation(e1, e2)==0) {
 													RESULT = TypeConvert.toReal(e1)/TypeConvert.toReal(e2);
 													}  
 												   else if (err.checkOperation(e1, e2)==-2){
-														String message = "Error: "+e1+"/"+e2+"\nNo se pueden hacer operaciones con booleano\n";
-														//report_error(message, null); 
+														String message = "\nError: "+e1+"/"+e2+"\nNo se pueden hacer operaciones con booleano\n";
 														mensajeError.add(message); 
 													} 
 													else {
-														String message = "Error: "+e1+"/"+e2+"\nOperandos no validos\n";
-														//report_error(message, null);
+														String message = "\nError: "+e1+"/"+e2+"\nOperandos no validos\n";
 														mensajeError.add(message);  
 														
 													}      
@@ -1270,7 +1276,7 @@ String message = "Declarado: "+e1;
 		Location e1xleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xleft;
 		Location e1xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		Object e1 = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		//@@CUPDBG28
+		//@@CUPDBG27
  RESULT = e1;        
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("t_float",25, ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
@@ -1283,7 +1289,7 @@ String message = "Declarado: "+e1;
 		Location e1xleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xleft;
 		Location e1xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		Integer e1 = (Integer)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		//@@CUPDBG29
+		//@@CUPDBG28
  RESULT = TypeConvert.toInteger(e1);          
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("f_float",26, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
@@ -1296,7 +1302,7 @@ String message = "Declarado: "+e1;
 		Location e1xleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xleft;
 		Location e1xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		Integer e1 = (Integer)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		//@@CUPDBG30
+		//@@CUPDBG29
  RESULT = -TypeConvert.toInteger(e1);       
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("f_float",26, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
@@ -1309,7 +1315,7 @@ String message = "Declarado: "+e1;
 		Location e1xleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xleft;
 		Location e1xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		Integer e1 = (Integer)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		//@@CUPDBG31
+		//@@CUPDBG30
  RESULT = TypeConvert.toInteger(e1);          
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("f_float",26, ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
@@ -1322,8 +1328,8 @@ String message = "Declarado: "+e1;
 		Location e1xleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xleft;
 		Location e1xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		char e1 = (char)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		//@@CUPDBG32
- RESULT = TypeConvert.toInteger(e1);        
+		//@@CUPDBG31
+ RESULT = e1;        
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("f_float",26, ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;
@@ -1335,7 +1341,7 @@ String message = "Declarado: "+e1;
 		Location e1xleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xleft;
 		Location e1xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		Float e1 = (Float)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		//@@CUPDBG33
+		//@@CUPDBG32
  RESULT = TypeConvert.toReal(e1);        
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("f_float",26, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
@@ -1348,7 +1354,7 @@ String message = "Declarado: "+e1;
 		Location e1xleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xleft;
 		Location e1xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		Float e1 = (Float)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		//@@CUPDBG34
+		//@@CUPDBG33
  RESULT = -TypeConvert.toReal(e1);       
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("f_float",26, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
@@ -1361,7 +1367,7 @@ String message = "Declarado: "+e1;
 		Location e1xleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xleft;
 		Location e1xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		Object e1 = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		//@@CUPDBG35
+		//@@CUPDBG34
  if (e1.getClass().getSimpleName().equals("Float")) RESULT = TypeConvert.toReal(e1);
 												   else  RESULT=TypeConvert.toInteger(e1);           
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("f_float",26, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
@@ -1375,7 +1381,7 @@ String message = "Declarado: "+e1;
 		Location e1xleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xleft;
 		Location e1xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		Object e1 = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		//@@CUPDBG36
+		//@@CUPDBG35
  if (e1.getClass().getSimpleName().equals("Float")) RESULT = -TypeConvert.toReal(e1);
 												   else  RESULT=-TypeConvert.toInteger(e1);     
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("f_float",26, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
@@ -1389,7 +1395,7 @@ String message = "Declarado: "+e1;
 		Location e1xleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xleft;
 		Location e1xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		Float e1 = (Float)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		//@@CUPDBG37
+		//@@CUPDBG36
  RESULT = TypeConvert.toReal(e1);        
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("f_float",26, ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
@@ -1402,7 +1408,7 @@ String message = "Declarado: "+e1;
 		Location e1xleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xleft;
 		Location e1xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		Object e1 = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		//@@CUPDBG38
+		//@@CUPDBG37
  RESULT = e1;        
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("f_float",26, ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
@@ -1415,7 +1421,7 @@ String message = "Declarado: "+e1;
 		Location e1xleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xleft;
 		Location e1xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		Object e1 = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		//@@CUPDBG39
+		//@@CUPDBG38
  for (Variable variable : variables) {
 															if(variable.id.equals(String.valueOf(e1))) {
 																if (!String.valueOf(variable.valor).equals("null")){
@@ -1423,7 +1429,7 @@ String message = "Declarado: "+e1;
 																	else if (variable.tipo.equals("ENTERO")||variable.tipo.equals("CARACTER")) RESULT = TypeConvert.toInteger(variable.valor);
 																	else if (variable.tipo.equals("BOOLEANO")) RESULT = variable.valor;}
 																else {
-																		String message = "Error: "+e1+"\nLa variable '"+e1+"' no esta inicializada\n";
+																		String message = "\nError: "+e1+"\nLa variable '"+e1+"' no esta inicializada\n";
 																		mensajeError.add(message);
 																}
 																
@@ -1440,22 +1446,21 @@ String message = "Declarado: "+e1;
 		Location e1xleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)).xleft;
 		Location e1xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)).xright;
 		Object e1 = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-1)).value;
-		//@@CUPDBG40
+		//@@CUPDBG39
   
 																	for (Variable variable : variables) {
 																		if(variable.id.equals(String.valueOf(e1))){
-																			//if (!String.valueOf(variable.valor).equals("null")){
 																				boolean error = false;
 
 																				if(variable.dimension.length != temp.size()){
-																					String message = "Error: "+e1+"\nNo coinciden las dimensiones del vector \n";
+																					String message = "\nError: "+e1+"\nNo coinciden las dimensiones del vector \n";
 																					mensajeError.add(message);	
 																					error = true;
 																				}
 																				else{
 																					for(int i = 0 ; i < temp.size(); i++) {
 																						if(variable.dimension[i]<temp.get(i)){
-																							String message = "Error: "+e1+"\nLlamada a vector fuera de los límites \n";
+																							String message = "\nError: "+e1+"\nLlamada a vector fuera de los límites \n";
 																							mensajeError.add(message);
 																							error = true;
 																							break; 
@@ -1475,11 +1480,6 @@ String message = "Declarado: "+e1;
 																				else if (variable.tipo.equals("VECTOR_ENTERO") || variable.tipo.equals("VECTOR_CARACTER")) RESULT = TypeConvert.toInteger(variable.vector[pos]);
 																				else if (variable.tipo.equals("VECTOR_BOOLEANO")) RESULT = variable.vector[pos];
 																				
-																				//}
-																			/*else {
-																				String message = "Error: "+e1+"\nLa variable '"+e1+"' no esta inicializada\n";
-																				mensajeError.add(message);
-																			}*/
 																		}
 																	}temp.clear();
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("f_float",26, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
@@ -1493,7 +1493,7 @@ String message = "Declarado: "+e1;
 		Location e1xleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xleft;
 		Location e1xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		Boolean e1 = (Boolean)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		//@@CUPDBG41
+		//@@CUPDBG40
  RESULT = !(boolean)e1;        
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("f_float",26, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
@@ -1506,7 +1506,7 @@ String message = "Declarado: "+e1;
 		Location e1xleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xleft;
 		Location e1xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		Boolean e1 = (Boolean)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		//@@CUPDBG42
+		//@@CUPDBG41
  RESULT = e1;        
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("f_float",26, ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
@@ -1519,7 +1519,7 @@ String message = "Declarado: "+e1;
 		Location e1xleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)).xleft;
 		Location e1xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)).xright;
 		Object e1 = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-1)).value;
-		//@@CUPDBG43
+		//@@CUPDBG42
  RESULT = e1;        
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("p_float",27, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-2)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
@@ -1535,17 +1535,17 @@ String message = "Declarado: "+e1;
 		Location e2xleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xleft;
 		Location e2xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		Object e2 = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		//@@CUPDBG44
+		//@@CUPDBG43
     
 														if (err.checkOperation(e1, e2)==0) {
 														RESULT = (e1.equals(e2)); 
 													}
 													else if (err.checkOperation(e1, e2)==-2) {
-														String message = "Error: "+e1+"=="+e2+"\nNo se puede comparar booleanos\n";
+														String message = "\nError: "+e1+"=="+e2+"\nNo se puede comparar tipos incompatibles\n";
 														mensajeError.add(message);
 													}
 													else {
-														 String message = "Error: "+e1+"=="+e2+"\nOperandos no validos\n";
+														 String message = "\nError: "+e1+"=="+e2+"\nOperandos no validos\n";
 														mensajeError.add(message);
 													}
 												 
@@ -1564,16 +1564,16 @@ String message = "Declarado: "+e1;
 		Location e2xleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xleft;
 		Location e2xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		Object e2 = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		//@@CUPDBG45
+		//@@CUPDBG44
   if (err.checkOperation(e1, e2)==0) {
 														RESULT = ((Float.valueOf(String.valueOf(e1))) <= (Float.valueOf(String.valueOf(e2))));
 													}
 													else if (err.checkOperation(e1, e2)==-2) {
-														String message = "Error: "+e1+"<="+e2+"\nNo se puede comparar booleanos\n";
+														String message = "\nError: "+e1+"<="+e2+"\nNo se puede comparar tipos incompatibles\n";
 														mensajeError.add(message);
 													}
 													else {
-														 String message = "Error: "+e1+"<="+e2+"\nOperandos no validos\n";
+														 String message = "\nError: "+e1+"<="+e2+"\nOperandos no validos\n";
 														mensajeError.add(message);
 													}
 												  
@@ -1591,17 +1591,17 @@ String message = "Declarado: "+e1;
 		Location e2xleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xleft;
 		Location e2xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		Object e2 = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		//@@CUPDBG46
+		//@@CUPDBG45
   
 													if (err.checkOperation(e1, e2)==0) {
 														RESULT = ((Float.valueOf(String.valueOf(e1))) >= (Float.valueOf(String.valueOf(e2))));
 													}
 													else if (err.checkOperation(e1, e2)==-2) {
-														String message = "Error: "+e1+">="+e2+"\nNo se puede comparar booleanos\n";
+														String message = "\nError: "+e1+">="+e2+"\nNo se puede comparar tipos incompatibles\n";
 														mensajeError.add(message);
 													}
 													else {
-														 String message = "Error: "+e1+">="+e2+"\nOperandos no validos\n";
+														 String message = "\nError: "+e1+">="+e2+"\nOperandos no validos\n";
 														mensajeError.add(message);
 													}
    												
@@ -1619,16 +1619,16 @@ String message = "Declarado: "+e1;
 		Location e2xleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xleft;
 		Location e2xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		Object e2 = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		//@@CUPDBG47
+		//@@CUPDBG46
  if (err.checkOperation(e1, e2)==0) {
 														RESULT = ((Float.valueOf(String.valueOf(e1))) != (Float.valueOf(String.valueOf(e2))));
 													}
 													else if (err.checkOperation(e1, e2)==-2) {
-														String message = "Error: "+e1+"!="+e2+"\nNo se puede comparar booleanos\n";
+														String message = "\nError: "+e1+"!="+e2+"\nNo se puede comparar tipos incompatibles\n";
 														mensajeError.add(message);
 													}
 													else {
-														 String message = "Error: "+e1+"!="+e2+"\nOperandos no validos\n";
+														 String message = "\nError: "+e1+"!="+e2+"\nOperandos no validos\n";
 														mensajeError.add(message);
 													}
    												
@@ -1646,16 +1646,16 @@ String message = "Declarado: "+e1;
 		Location e2xleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xleft;
 		Location e2xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		Object e2 = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		//@@CUPDBG48
+		//@@CUPDBG47
  if (err.checkOperation(e1, e2)==0) {
 														RESULT = ((Float.valueOf(String.valueOf(e1))) < (Float.valueOf(String.valueOf(e2))));
 													}
 													else if (err.checkOperation(e1, e2)==-2) {
-														String message = "Error: "+e1+"<"+e2+"\nNo se puede comparar booleanos\n";
+														String message = "\nError: "+e1+"<"+e2+"\nNo se puede comparar tipos incompatibles\n";
 														mensajeError.add(message);
 													}
 													else {
-														String message = "Error: "+e1+"<"+e2+"\nOperandos no validos\n";
+														String message = "\nError: "+e1+"<"+e2+"\nOperandos no validos\n";
 														mensajeError.add(message);
 													}
 												
@@ -1673,16 +1673,16 @@ String message = "Declarado: "+e1;
 		Location e2xleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xleft;
 		Location e2xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		Object e2 = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		//@@CUPDBG49
+		//@@CUPDBG48
  if (err.checkOperation(e1, e2)==0) {
 														RESULT = ((Float.valueOf(String.valueOf(e1))) > (Float.valueOf(String.valueOf(e2))));
 													}
 													else if (err.checkOperation(e1, e2)==-2) {
-														String message = "Error: "+e1+">"+e2+"\nNo se puede comparar booleanos\n";
+														String message = "\nError: "+e1+">"+e2+"\nNo se puede comparar tipos incompatibles\n";
 														mensajeError.add(message);
 													}
 													else {
-														 String message = "Error: "+e1+">"+e2+"\nOperandos no validos\n";
+														 String message = "\nError: "+e1+">"+e2+"\nOperandos no validos\n";
 														mensajeError.add(message);
 													}
 										        
@@ -1700,7 +1700,7 @@ String message = "Declarado: "+e1;
 		Location e2xleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xleft;
 		Location e2xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		Boolean e2 = (Boolean)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		//@@CUPDBG50
+		//@@CUPDBG49
  if (!String.valueOf(e1).equals("null")&&!String.valueOf(e2).equals("null")) RESULT = (((boolean)e1) || ((boolean)e2)); 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("e_boolean",29, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-2)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
@@ -1716,7 +1716,7 @@ String message = "Declarado: "+e1;
 		Location e2xleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xleft;
 		Location e2xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$Parser$stack.peek()).xright;
 		Boolean e2 = (Boolean)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		//@@CUPDBG51
+		//@@CUPDBG50
  if (!String.valueOf(e1).equals("null")&&!String.valueOf(e2).equals("null"))  RESULT = (((boolean)e1) && ((boolean)e2)); 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("e_boolean",29, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-2)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }

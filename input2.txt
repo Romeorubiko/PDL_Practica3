@@ -2,32 +2,44 @@
 
 %%%%%% Declaracion de variables  
 REAL re1, re2;  
+
+Entero re1;											%%Variable ya declarada
 %% Asignación de valores incorreta
-re2 = true;	
-BOOLEANO bo1 <- 3+5/(3+2);
-ENTERO e1 <- 5/2;
-VECTOR REAL punto1[4.2][5][a];
-punto1[4]<-5;
+re2 = true;											%% boolean a real
+
+BOOLEANO bo1 <- 3+5/(3+4);							%% real a boolean
+bo = 'h';											%% caracter a boolean
+bo = 5+3;											%% entero a boolean
+
+ENTERO e1 <- 5/2;									%% real a entero
+CARACTER c = 5.5;									%% real a caracter
+CARACTER c = 4;										%% entero a caracter
+
+
+VECTOR REAL punto1[4.2][5][a];						%% dimensiones incorrectas del vector
+punto1[4]<-5;										%% asignacion a un vector no inicializado
 
 
 %%Operaciones con tipos incompatibles
-BOOLEANO bo2 = 5+3*(4-2) < 20; 
-re1 = 1.1+bo2-3;
-bo2 <- re1 - 5;
+BOOLEANO bo2 = true; 
+re1 = 1.1+bo2-3;									%% Operaciones con booleano
+bo2 <- re1;											%% re1 no es una variable
+bo2 <- 5+3-8*6; 									%% Asignacion no entero a booleano
+
 
 %%Acceso a posiciones del vector incorrectas
 VECTOR ENTERO punto2[2][3];
-punto2[5][2] = 1;
-punto2[1][2][3] = 1;
+punto2[1][1] = 2;
+punto2[5][2] = 3;									%% Acceso a posiciones fuera de limites
+punto2[1][2][3] = 4;								%% Dimesiones incorrectas 
 
 %%Operaciones booleanas incorrectas
-BOOLEANO b2 = true;
-SI b2==false OR b2<5 ENTONCES
+SI bo2==false OR bo2<5 ENTONCES					    %% comparacion entre booleano y entero
 bo1 = true;
 FINSI
 
-MIENTRAS 5<=b2 AND 5+6*3==5
-punto2[1][2][3] = 1;
+MIENTRAS c==bo2						                %% comparacion entre booleano y caracter
+punto2[1][2][3] = 8;								%% dimensiones incorrectas del vector. 
 FINMIENTRAS
 
 
